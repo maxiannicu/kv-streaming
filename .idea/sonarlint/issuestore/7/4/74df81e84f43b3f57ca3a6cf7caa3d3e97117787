@@ -1,0 +1,9 @@
+
+Dsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8”Ğ²·À+
+bsquid:S2142"FEither re-interrupt this method or rethrow the "InterruptedException".(ä ¹€8”Ğ²·À+
+qsquid:S1450"URemove the "client" field and declare it as a local variable in the relevant methods.(şÌÿ8ÒØª¸À+
+Fsquid:S1166"%Either log or rethrow this exception.(„¢³¥úÿÿÿÿ8”Ğ²·À+
+Dsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8”Ğ²·À+
+osquid:S1450"SRemove the "bimg" field and declare it as a local variable in the relevant methods.(ÌøàŸ8”Ğ²·À+
+zsquid:S1450"^Remove the "screenShotMaker" field and declare it as a local variable in the relevant methods.(…òáß8µ—ª¸À+
+Vsquid:S1141"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8”Ğ²·À+

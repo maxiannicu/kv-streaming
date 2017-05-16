@@ -20,28 +20,34 @@ public class ClientImpl implements Client {
         try {
             client = new Socket(host, port);
             clientListener.onConnect();
-            receiveUserNameAndPort();
-            receiveObjectData();
+            receiveUserNameAndPort(clientListener);
+            receiveObjectData(clientListener);
         } catch (IOException e) {
             clientListener.onConnectionFailed(e.toString());
             e.printStackTrace();
         }
     }
 
-    private void receiveUserNameAndPort() {
+    private void receiveUserNameAndPort(ClientListener listener) {
         try {
             objectReader = new ObjectInputStream(client.getInputStream());
-            System.out.println("Message from Server " + objectReader.readInt() + " " + objectReader.readUTF()); //TODO : For testing purposes
+
+            int udpPort = objectReader.readInt();
+            String username = objectReader.readUTF();
+            listener.onAccepted(username);
+
+            System.out.println("Message from Server " + udpPort + " " + username); //TODO : For testing purposes
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private void receiveObjectData() {
+    private void receiveObjectData(ClientListener listener) {
 
         try {
             Message message = (Message) objectReader.readObject();
+            listener.onNewMessage(message);
             System.out.println("Object from server " + message.getMessage() + " " + message.getSender() + " " + message.getSentOnUtc().toString()); //TODO : For testing purposes
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

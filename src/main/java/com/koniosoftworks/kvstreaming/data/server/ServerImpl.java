@@ -1,24 +1,31 @@
 package com.koniosoftworks.kvstreaming.data.server;
 
-import com.koniosoftworks.kvstreaming.domain.dto.Message;
+import com.koniosoftworks.kvstreaming.data.io.ScannerDeserealizer;
+import com.koniosoftworks.kvstreaming.data.io.StreamSerializer;
+import com.koniosoftworks.kvstreaming.domain.dto.Packet;
+import com.koniosoftworks.kvstreaming.domain.dto.PacketType;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
+import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.io.Serializer;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
 import com.koniosoftworks.kvstreaming.utils.NameGenerator;
+
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.Instant;
-import java.util.Date;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 /**
  * Created by nicu on 5/15/17.
  */
 public class ServerImpl implements Server {
-
-    private static final int UDP_PORT = 9000;
     private ServerSocket serverSocket;
     private Socket socket;
-    private ObjectOutputStream objectWriter;
+    private Serializer serializer;
+    private Deserializer deserializer;
 
     @Override
     public void start(int port) {
@@ -27,35 +34,25 @@ public class ServerImpl implements Server {
             serverSocket.setSoTimeout(180000);
             System.out.println("Waiting for connections...");
             socket = serverSocket.accept();
+            serializer = new StreamSerializer(socket.getOutputStream());
+            deserializer = new ScannerDeserealizer(socket.getInputStream());
             sendUserNameAndPort();
-            sendObjectData();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void sendUserNameAndPort() {
+        Packet<InitializationMessage> message = new Packet<>(PacketType.INITITIALIZATION, new InitializationMessage(serverSocket.getLocalPort(),NameGenerator.generateName()));
 
+        message.serialize(serializer);
         try {
-            objectWriter = new ObjectOutputStream(socket.getOutputStream());
-            objectWriter.writeInt(UDP_PORT);
-            objectWriter.flush();
-            objectWriter.writeUTF(NameGenerator.generateName());
-            objectWriter.flush();
+            socket.getOutputStream().flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void sendObjectData() {
-        try {
-            objectWriter.writeObject(new Message("localhost", "Dummy Message", Date.from(Instant.now())));
-            objectWriter.flush();
-            objectWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     @Override
     public void stop() {
         try {

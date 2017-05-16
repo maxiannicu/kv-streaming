@@ -9,9 +9,10 @@ import com.koniosoftworks.kvstreaming.domain.server.Server;
 /**
  * Created by nicu on 5/15/17.
  */
-public class ServerModule implements Module {
+public class ServerModule extends BaseModule {
     @Override
     public void configure(Binder binder) {
+        super.configure(binder);
         binder.bind(Server.class).to(ServerImpl.class).in(Scopes.SINGLETON);
     }
 }

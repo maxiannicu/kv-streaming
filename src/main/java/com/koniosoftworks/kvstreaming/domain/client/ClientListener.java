@@ -1,7 +1,7 @@
 package com.koniosoftworks.kvstreaming.domain.client;
 
 
-import com.koniosoftworks.kvstreaming.domain.dto.Message;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 
 import java.awt.image.BufferedImage;
 
@@ -13,6 +13,6 @@ public interface ClientListener {
     void onDisconnect();
     void onConnectionFailed(String message);
     void onAccepted(String username);
-    void onNewMessage(Message message);
+    void onNewMessage(ChatMessage chatMessage);
     void onImageReceived(BufferedImage image);
 }

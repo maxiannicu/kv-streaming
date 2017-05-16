@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
-import com.koniosoftworks.kvstreaming.domain.dto.Message;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
 
 import java.awt.image.BufferedImage;
@@ -24,7 +24,7 @@ public class ClientApp implements ClientListener {
 
     public void start(){
         //TODO init UI here
-        client.connect(this, "localhost", 8081);
+        client.connect(this, "localhost", 31012);
     }
 
     public static void main(String[] args){
@@ -54,7 +54,7 @@ public class ClientApp implements ClientListener {
     }
 
     @Override
-    public void onNewMessage(Message message) {
+    public void onNewMessage(ChatMessage chatMessage) {
 
     }
 

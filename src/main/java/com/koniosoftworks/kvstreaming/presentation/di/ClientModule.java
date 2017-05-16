@@ -9,9 +9,10 @@ import com.koniosoftworks.kvstreaming.domain.client.Client;
 /**
  * Created by nicu on 5/15/17.
  */
-public class ClientModule implements Module {
+public class ClientModule extends BaseModule {
     @Override
     public void configure(Binder binder) {
+        super.configure(binder);
         binder.bind(Client.class).to(ClientImpl.class).in(Scopes.SINGLETON);
     }
 }

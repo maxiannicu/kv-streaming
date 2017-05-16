@@ -11,7 +11,7 @@ import com.koniosoftworks.kvstreaming.presentation.di.ServerModule;
  * Created by nicu on 5/15/17.
  */
 public class ServerApp {
-    private final static int PORT = 8081;
+    private final static int PORT = 31012;
     private final Server server;
 
     @Inject

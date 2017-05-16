@@ -1,61 +1,52 @@
 package com.koniosoftworks.kvstreaming.data.client;
 
+import com.koniosoftworks.kvstreaming.data.io.ScannerDeserealizer;
+import com.koniosoftworks.kvstreaming.data.io.StreamSerializer;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
-import com.koniosoftworks.kvstreaming.domain.dto.Message;
+import com.koniosoftworks.kvstreaming.domain.dto.Packet;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.io.Serializer;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 /**
  * Created by nicu on 5/15/17.
  */
 public class ClientImpl implements Client {
 
-    private Socket client;
+    private Socket socket;
     private ObjectInputStream objectReader;
+    private Serializer serializer;
+    private Deserializer deserializer;
 
     @Override
     public void connect(ClientListener clientListener, String host, int port) {
         try {
-            client = new Socket(host, port);
+            socket = new Socket(host, port);
+            serializer = new StreamSerializer(socket.getOutputStream());
+            deserializer = new ScannerDeserealizer(socket.getInputStream());
+
             clientListener.onConnect();
-            receiveUserNameAndPort(clientListener);
-            receiveObjectData(clientListener);
+            while (true){
+                while (!deserializer.hasNextInt()){}
+                Packet packet = new Packet();
+                packet.unserialize(deserializer);
+                System.out.println(packet);
+            }
         } catch (IOException e) {
             clientListener.onConnectionFailed(e.toString());
             e.printStackTrace();
         }
     }
 
-    private void receiveUserNameAndPort(ClientListener listener) {
-        try {
-            objectReader = new ObjectInputStream(client.getInputStream());
-
-            int udpPort = objectReader.readInt();
-            String username = objectReader.readUTF();
-            listener.onAccepted(username);
-
-            System.out.println("Message from Server " + udpPort + " " + username); //TODO : For testing purposes
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void receiveObjectData(ClientListener listener) {
-
-        try {
-            Message message = (Message) objectReader.readObject();
-            listener.onNewMessage(message);
-            System.out.println("Object from server " + message.getMessage() + " " + message.getSender() + " " + message.getSentOnUtc().toString()); //TODO : For testing purposes
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public void disconnect() {

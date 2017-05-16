@@ -7,7 +7,6 @@ import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.Message;
 import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
-import sample.Main;
 
 import java.awt.image.BufferedImage;
 

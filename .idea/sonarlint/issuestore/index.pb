@@ -14,3 +14,13 @@ L
 :
 
 .gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
+n
+>src/com/koniosoftworks/kvstreaming/data/client/ClientImpl.java,8/5/8566f07031e595564a25f67f1e44a99007a1ed72
+t
+Dsrc/com/koniosoftworks/kvstreaming/presentation/di/ServerModule.java,b/5/b5250115bf04cda06fd0b26367243367d50adae1
+l
+<src/com/koniosoftworks/kvstreaming/domain/client/Client.java,c/d/cd442e69cd95a370ca482ecf487762c58cd8e2ba
+t
+Dsrc/com/koniosoftworks/kvstreaming/domain/client/ClientListener.java,6/1/6135b2c24976ac03417e4e1106ea4a2fc8d614d7
+<
+build.gradle,f/0/f07866736216be0ee2aba49e392191aeae700a35

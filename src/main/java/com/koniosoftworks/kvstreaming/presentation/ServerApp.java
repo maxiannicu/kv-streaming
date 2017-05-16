@@ -11,6 +11,7 @@ import com.koniosoftworks.kvstreaming.presentation.di.ServerModule;
  * Created by nicu on 5/15/17.
  */
 public class ServerApp {
+    private final static int PORT = 8081;
     private final Server server;
 
     @Inject
@@ -20,6 +21,7 @@ public class ServerApp {
 
     public void start(){
         //TODO init UI here
+        server.start(PORT);
     }
 
     public static void main(String[] args){

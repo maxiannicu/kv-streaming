@@ -1,3 +1,4 @@
+import com.koniosoftworks.kvstreaming.utils.NameGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,6 @@ public class SampleTest {
 
     @Test
     public void dummyTest() {
-
         Assert.assertEquals("horse".length(), 5);
     }
 }

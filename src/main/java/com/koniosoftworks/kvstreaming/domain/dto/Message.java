@@ -1,11 +1,12 @@
 package com.koniosoftworks.kvstreaming.domain.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by nicu on 5/15/17.
  */
-public class Message {
+public class Message implements Serializable {
     private final String sender;
     private final String message;
     private final Date sentOnUtc;

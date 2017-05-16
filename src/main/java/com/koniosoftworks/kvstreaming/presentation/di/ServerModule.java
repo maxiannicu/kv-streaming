@@ -1,7 +1,6 @@
 package com.koniosoftworks.kvstreaming.presentation.di;
 
 import com.google.inject.Binder;
-import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.koniosoftworks.kvstreaming.data.server.ServerImpl;
 import com.koniosoftworks.kvstreaming.domain.server.Server;

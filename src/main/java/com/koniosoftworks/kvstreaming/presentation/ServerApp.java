@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
-import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
 import com.koniosoftworks.kvstreaming.presentation.di.ServerModule;
 
 /**

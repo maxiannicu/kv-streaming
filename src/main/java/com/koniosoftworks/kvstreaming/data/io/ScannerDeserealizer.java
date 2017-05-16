@@ -1,10 +1,10 @@
 package com.koniosoftworks.kvstreaming.data.io;
 
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
-import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
-
 import java.io.InputStream;
 import java.util.Scanner;
+
+import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
 
 /**
  * Created by nicu on 5/17/17.

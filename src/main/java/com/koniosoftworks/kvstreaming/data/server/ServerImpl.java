@@ -1,5 +1,9 @@
 package com.koniosoftworks.kvstreaming.data.server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import com.koniosoftworks.kvstreaming.data.io.ScannerDeserealizer;
 import com.koniosoftworks.kvstreaming.data.io.StreamSerializer;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
@@ -9,14 +13,6 @@ import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
 import com.koniosoftworks.kvstreaming.domain.io.Serializer;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
 import com.koniosoftworks.kvstreaming.utils.NameGenerator;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 /**
  * Created by nicu on 5/15/17.

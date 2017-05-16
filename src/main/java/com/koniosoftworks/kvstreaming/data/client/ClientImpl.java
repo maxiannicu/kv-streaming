@@ -1,21 +1,16 @@
 package com.koniosoftworks.kvstreaming.data.client;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
+
 import com.koniosoftworks.kvstreaming.data.io.ScannerDeserealizer;
 import com.koniosoftworks.kvstreaming.data.io.StreamSerializer;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
-import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
 import com.koniosoftworks.kvstreaming.domain.io.Serializer;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 /**
  * Created by nicu on 5/15/17.

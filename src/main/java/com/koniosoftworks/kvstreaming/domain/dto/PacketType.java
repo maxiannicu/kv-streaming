@@ -1,11 +1,10 @@
 package com.koniosoftworks.kvstreaming.domain.dto;
 
+import java.lang.reflect.Constructor;
+
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by nicu on 5/16/17.

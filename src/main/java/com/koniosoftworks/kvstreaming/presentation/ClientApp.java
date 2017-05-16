@@ -1,5 +1,7 @@
 package com.koniosoftworks.kvstreaming.presentation;
 
+import java.awt.image.BufferedImage;
+
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -7,8 +9,6 @@ import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
-
-import java.awt.image.BufferedImage;
 
 /**
  * Created by nicu on 5/15/17.

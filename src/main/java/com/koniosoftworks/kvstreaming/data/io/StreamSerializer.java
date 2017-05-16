@@ -1,11 +1,10 @@
 package com.koniosoftworks.kvstreaming.data.io;
 
-import com.koniosoftworks.kvstreaming.domain.io.Serializer;
-import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
+
+import com.koniosoftworks.kvstreaming.domain.io.Serializer;
+import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
 
 /**
  * Created by nicu on 5/17/17.

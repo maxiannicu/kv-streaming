@@ -1,9 +1,9 @@
 package com.koniosoftworks.kvstreaming.domain.client;
 
 
-import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
-
 import java.awt.image.BufferedImage;
+
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 
 /**
  * Created by nicu on 5/15/17.

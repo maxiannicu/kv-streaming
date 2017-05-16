@@ -1,10 +1,11 @@
 package sample;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
+
+import javax.imageio.ImageIO;
 
 /**
  * Created by lschidu on 5/13/17.

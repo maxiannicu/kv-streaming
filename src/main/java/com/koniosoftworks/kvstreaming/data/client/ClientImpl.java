@@ -30,7 +30,7 @@ public class ClientImpl implements Client {
             deserializer = new ScannerDeserealizer(socket.getInputStream());
 
             clientListener.onConnect();
-            while (true){
+            while (!socket.isClosed()){
                 while (!deserializer.hasNextInt()){}
                 Packet packet = new Packet();
                 packet.unserialize(deserializer);

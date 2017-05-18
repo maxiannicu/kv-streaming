@@ -1,0 +1,17 @@
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<GridPane fx:controller="com.koniosoftworks.kvstreaming.presentation.ui.WelcomeScreenController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+
+    <Button text="Start Client"
+            onAction="#handleStartClient"
+            GridPane.rowIndex="0"
+            GridPane.columnIndex="0"
+            fx:id="startClientButton"/>
+
+    <Button text="Start Server"
+            onAction="#handleStartServer"
+            GridPane.rowIndex="0"
+            GridPane.columnIndex="1"
+            fx:id="startServerButton"/>
+</GridPane>

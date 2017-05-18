@@ -1,0 +1,17 @@
+.root {
+    -fx-background-color: burlywood;
+}
+
+.button {
+    -fx-background-color: cadetblue;
+    -fx-font-size: 20;
+    -fx-font-family: fantasy;
+}
+
+.button:hover {
+    -fx-background-color: #4ca05e;
+}
+
+.button:pressed {
+    -fx-background-color: chocolate;
+}

@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.presentation.ui;
+package com.koniosoftworks.kvstreaming.presentation.ui.init;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

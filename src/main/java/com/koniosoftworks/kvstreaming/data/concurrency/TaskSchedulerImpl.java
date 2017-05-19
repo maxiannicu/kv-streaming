@@ -14,6 +14,12 @@ public class TaskSchedulerImpl implements TaskScheduler {
     private Map<Runnable,ScheduledFuture> runnableScheduledFutureMap = new HashMap<>();
 
     @Override
+    public void run(Runnable runnable) {
+        ScheduledFuture<?> schedule = executorService.schedule(runnable, 0, TimeUnit.SECONDS);
+        runnableScheduledFutureMap.put(runnable,schedule);
+    }
+
+    @Override
     public void schedule(Runnable runnable,int period, TimeUnit unit) {
         ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(runnable, 0, period, unit);
         runnableScheduledFutureMap.put(runnable,scheduledFuture);
@@ -22,7 +28,7 @@ public class TaskSchedulerImpl implements TaskScheduler {
     @Override
     public void unschedule(Runnable runnable) {
         if(runnableScheduledFutureMap.containsKey(runnable)){
-            runnableScheduledFutureMap.get(runnable).cancel(false);
+            runnableScheduledFutureMap.get(runnable).cancel(true);
             runnableScheduledFutureMap.remove(runnable);
         }
     }
@@ -32,7 +38,7 @@ public class TaskSchedulerImpl implements TaskScheduler {
         runnableScheduledFutureMap.entrySet()
                 .stream()
                 .map(Map.Entry::getValue)
-                .forEach(scheduledFuture -> scheduledFuture.cancel(false));
+                .forEach(scheduledFuture -> scheduledFuture.cancel(true));
         runnableScheduledFutureMap.clear();
     }
 }

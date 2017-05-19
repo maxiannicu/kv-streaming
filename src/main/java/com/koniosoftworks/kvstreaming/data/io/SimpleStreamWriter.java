@@ -3,16 +3,16 @@ package com.koniosoftworks.kvstreaming.data.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.koniosoftworks.kvstreaming.domain.io.Serializer;
+import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
 import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
 
 /**
  * Created by nicu on 5/17/17.
  */
-public class StreamSerializer implements Serializer {
+public class SimpleStreamWriter implements StreamWriter {
     private OutputStream outputStream;
 
-    public StreamSerializer(OutputStream outputStream) {
+    public SimpleStreamWriter(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

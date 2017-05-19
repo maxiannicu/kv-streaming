@@ -4,18 +4,15 @@ import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.exception.SerializeException;
 import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.SerializationAlgorithm;
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.sun.xml.internal.ws.encoding.soap.DeserializationException;
 
-import javax.inject.Named;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +33,7 @@ public class PacketSerializationImpl implements PacketSerialization {
             throw new SerializeException("Packet cannot have null data");
 
         ByteOutputStream byteOutputStream = new ByteOutputStream();
-        StreamSerializer streamSerializer = new StreamSerializer(byteOutputStream);
+        SimpleStreamWriter streamSerializer = new SimpleStreamWriter(byteOutputStream);
 
         serialize(packet, streamSerializer);
         serialize(data, streamSerializer);
@@ -49,15 +46,15 @@ public class PacketSerializationImpl implements PacketSerialization {
     @Override
     public Packet unserialize(byte[] bytes) throws IOException {
         ByteInputStream byteInputStream = new ByteInputStream(bytes,bytes.length);
-        ScannerDeserealizer scannerDeserealizer = new ScannerDeserealizer(byteInputStream);
+        ScannerStreamReader scannerStreamReader = new ScannerStreamReader(byteInputStream);
 
         Packet packet = new Packet();
-        unserialize(packet,scannerDeserealizer);
+        unserialize(packet, scannerStreamReader);
         Class mappedClass = packet.getPacketType().getMappedClass();
         try {
             Object data = mappedClass.getConstructor().newInstance();
             packet.setData(data);
-            unserialize(data,scannerDeserealizer);
+            unserialize(data, scannerStreamReader);
         } catch (Exception e) {
             throw new UnserializeException("Unable to unserialize data object",e);
         }
@@ -68,7 +65,7 @@ public class PacketSerializationImpl implements PacketSerialization {
     }
 
     @SuppressWarnings("unchecked")
-    private void serialize(Object data, StreamSerializer streamSerializer) throws SerializeException {
+    private void serialize(Object data, SimpleStreamWriter streamSerializer) throws SerializeException {
         Class<?> dataClass = data.getClass();
         if(!algorithmMap.containsKey(dataClass))
             throw new SerializeException("Not found serialization algorithm for class "+ dataClass.getName());
@@ -78,12 +75,12 @@ public class PacketSerializationImpl implements PacketSerialization {
     }
 
     @SuppressWarnings("unchecked")
-    private void unserialize(Object data, Deserializer deserializer) throws DeserializationException {
+    private void unserialize(Object data, StreamReader streamReader) throws DeserializationException {
         Class<?> dataClass = data.getClass();
         if(!algorithmMap.containsKey(dataClass))
             throw new DeserializationException("Not found serialization algorithm for class "+ dataClass.getName());
 
         SerializationAlgorithm serializationAlgorithm = algorithmMap.get(dataClass);
-        serializationAlgorithm.deserialize(deserializer, data);
+        serializationAlgorithm.deserialize(streamReader, data);
     }
 }

@@ -2,9 +2,6 @@ package com.koniosoftworks.kvstreaming.domain.dto.messages;
 
 import java.util.Date;
 
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
-import com.koniosoftworks.kvstreaming.domain.io.Serializer;
-
 /**
  * Created by nicu on 5/15/17.
  */

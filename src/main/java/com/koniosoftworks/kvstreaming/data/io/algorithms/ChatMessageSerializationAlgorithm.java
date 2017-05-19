@@ -1,9 +1,9 @@
 package com.koniosoftworks.kvstreaming.data.io.algorithms;
 
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.io.SerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.domain.io.Serializer;
+import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
 
 import java.util.Date;
 
@@ -12,16 +12,16 @@ import java.util.Date;
  */
 public class ChatMessageSerializationAlgorithm implements SerializationAlgorithm<ChatMessage> {
     @Override
-    public void serialize(Serializer serializer, ChatMessage object) {
-        serializer.put(object.getSender());
-        serializer.put(object.getMessage());
-        serializer.put(object.getSentOnUtc().getTime());
+    public void serialize(StreamWriter streamWriter, ChatMessage object) {
+        streamWriter.put(object.getSender());
+        streamWriter.put(object.getMessage());
+        streamWriter.put(object.getSentOnUtc().getTime());
     }
 
     @Override
-    public void deserialize(Deserializer deserializer, ChatMessage object) {
-        object.setSender(deserializer.nextString());
-        object.setMessage(deserializer.nextString());
-        object.setSentOnUtc(new Date(deserializer.nextLong()));
+    public void deserialize(StreamReader streamReader, ChatMessage object) {
+        object.setSender(streamReader.nextString());
+        object.setMessage(streamReader.nextString());
+        object.setSentOnUtc(new Date(streamReader.nextLong()));
     }
 }

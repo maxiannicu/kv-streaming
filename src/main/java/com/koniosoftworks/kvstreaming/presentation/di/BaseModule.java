@@ -8,6 +8,7 @@ import com.google.inject.name.Names;
 import com.koniosoftworks.kvstreaming.data.concurrency.TaskSchedulerImpl;
 import com.koniosoftworks.kvstreaming.data.io.Base64Encoding;
 import com.koniosoftworks.kvstreaming.data.io.PacketSerializationImpl;
+import com.koniosoftworks.kvstreaming.data.io.SimpleStreamWriter;
 import com.koniosoftworks.kvstreaming.data.io.algorithms.ChatMessageSerializationAlgorithm;
 import com.koniosoftworks.kvstreaming.data.io.algorithms.InitializationMessageSerializationAlgorithm;
 import com.koniosoftworks.kvstreaming.data.io.algorithms.PacketSerializationAlgorithm;
@@ -18,6 +19,7 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.SerializationAlgorithm;
+import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
 
 import java.util.HashMap;
 import java.util.Map;

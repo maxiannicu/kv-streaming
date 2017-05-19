@@ -3,7 +3,7 @@ package com.koniosoftworks.kvstreaming.domain.io;
 /**
  * Created by nicu on 5/17/17.
  */
-public interface Serializer {
+public interface StreamWriter {
     void put(boolean val);
     void put(byte val);
     void put(int val);

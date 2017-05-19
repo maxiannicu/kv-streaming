@@ -5,11 +5,13 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import com.google.inject.Inject;
+import com.koniosoftworks.kvstreaming.data.io.ScannerStreamReader;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
+import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
 
 /**
@@ -19,7 +21,7 @@ public class ClientImpl implements Client {
     private Socket socket;
     private final PacketSerialization packetSerialization;
     private final EncodingAlgorithm encodingAlgorithm;
-    private Scanner scanner;
+    private StreamReader streamReader;
 
     @Inject
     public ClientImpl(PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm) {
@@ -33,13 +35,11 @@ public class ClientImpl implements Client {
             socket = new Socket(host, port);
             System.out.println("Connected to server");
             clientListener.onConnect();
-            scanner = new Scanner(socket.getInputStream());
-            scanner.useDelimiter(MessagingProperties.MESSAGING_DELIMITER);
+            streamReader = new ScannerStreamReader(socket.getInputStream());
             while (!socket.isClosed()){
-                while (!scanner.hasNext()){}
+                while (!streamReader.hasNextString()){}
 
-                String next = scanner.next();
-                byte[] bytes = encodingAlgorithm.decode(next.getBytes());
+                byte[] bytes = encodingAlgorithm.decode(streamReader.nextString().getBytes());
                 Packet packet = packetSerialization.unserialize(bytes);
                 System.out.println(packet);
             }

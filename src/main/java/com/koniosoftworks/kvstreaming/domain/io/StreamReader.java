@@ -3,7 +3,7 @@ package com.koniosoftworks.kvstreaming.domain.io;
 /**
  * Created by nicu on 5/17/17.
  */
-public interface Deserializer {
+public interface StreamReader {
     boolean hasNextBoolean();
     boolean hasNextByte();
     boolean hasNextInt();

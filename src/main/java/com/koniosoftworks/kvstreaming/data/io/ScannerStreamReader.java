@@ -3,16 +3,16 @@ package com.koniosoftworks.kvstreaming.data.io;
 import java.io.InputStream;
 import java.util.Scanner;
 
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
+import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
 
 /**
  * Created by nicu on 5/17/17.
  */
-public class ScannerDeserealizer implements Deserializer {
+public class ScannerStreamReader implements StreamReader {
     private Scanner scanner;
 
-    public ScannerDeserealizer(InputStream inputStream) {
+    public ScannerStreamReader(InputStream inputStream) {
         this.scanner = new Scanner(inputStream,MessagingProperties.CHARSET);
         this.scanner.useDelimiter(MessagingProperties.MESSAGING_DELIMITER);
     }

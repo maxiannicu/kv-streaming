@@ -1,9 +1,5 @@
 package com.koniosoftworks.kvstreaming.domain.dto;
 
-import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
-import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
-import com.koniosoftworks.kvstreaming.domain.io.Serializer;
-
 /**
  * Created by nicu on 5/16/17.
  */

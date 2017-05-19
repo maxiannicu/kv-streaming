@@ -1,13 +1,12 @@
 package com.koniosoftworks.kvstreaming.domain.dto.messages;
 
-import com.koniosoftworks.kvstreaming.domain.dto.NetworkSerializable;
 import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
 import com.koniosoftworks.kvstreaming.domain.io.Serializer;
 
 /**
  * Created by nicu on 5/16/17.
  */
-public class InitializationMessage implements NetworkSerializable {
+public class InitializationMessage {
     private int udpPort;
     private String username;
 
@@ -27,6 +26,14 @@ public class InitializationMessage implements NetworkSerializable {
         return username;
     }
 
+    public void setUdpPort(int udpPort) {
+        this.udpPort = udpPort;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public String toString() {
         return "InitializationMessage{" +
@@ -34,18 +41,4 @@ public class InitializationMessage implements NetworkSerializable {
                 ", username='" + username + '\'' +
                 '}';
     }
-
-
-    @Override
-    public void serialize(Serializer serializer) {
-        serializer.put(udpPort);
-        serializer.put(username);
-    }
-
-    @Override
-    public void unserialize(Deserializer deserializer) {
-        udpPort = deserializer.nextInt();
-        username = deserializer.nextString();
-    }
-
 }

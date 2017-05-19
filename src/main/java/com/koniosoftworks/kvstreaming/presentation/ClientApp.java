@@ -14,7 +14,6 @@ import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
  * Created by nicu on 5/15/17.
  */
 public class ClientApp implements ClientListener {
-
     private final Client client;
 
     @Inject

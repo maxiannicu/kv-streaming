@@ -2,14 +2,13 @@ package com.koniosoftworks.kvstreaming.domain.dto.messages;
 
 import java.util.Date;
 
-import com.koniosoftworks.kvstreaming.domain.dto.NetworkSerializable;
 import com.koniosoftworks.kvstreaming.domain.io.Deserializer;
 import com.koniosoftworks.kvstreaming.domain.io.Serializer;
 
 /**
  * Created by nicu on 5/15/17.
  */
-public class ChatMessage implements NetworkSerializable {
+public class ChatMessage {
     private String sender;
     private String message;
     private Date sentOnUtc;
@@ -35,6 +34,18 @@ public class ChatMessage implements NetworkSerializable {
         return sentOnUtc;
     }
 
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setSentOnUtc(Date sentOnUtc) {
+        this.sentOnUtc = sentOnUtc;
+    }
+
     @Override
     public String toString() {
         return "ChatMessage{" +
@@ -42,19 +53,5 @@ public class ChatMessage implements NetworkSerializable {
                 ", message='" + message + '\'' +
                 ", sentOnUtc=" + sentOnUtc +
                 '}';
-    }
-
-    @Override
-    public void serialize(Serializer serializer) {
-        serializer.put(sender);
-        serializer.put(message);
-        serializer.put(sentOnUtc.getTime());
-    }
-
-    @Override
-    public void unserialize(Deserializer deserializer) {
-        sender = deserializer.nextString();
-        message = deserializer.nextString();
-        sentOnUtc = new Date(deserializer.nextLong());
     }
 }

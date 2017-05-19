@@ -7,7 +7,7 @@ import com.koniosoftworks.kvstreaming.domain.io.Serializer;
 /**
  * Created by nicu on 5/16/17.
  */
-public class Packet<T extends NetworkSerializable> implements NetworkSerializable {
+public class Packet<T> {
     private PacketType packetType;
     private T data;
 
@@ -27,6 +27,14 @@ public class Packet<T extends NetworkSerializable> implements NetworkSerializabl
         return data;
     }
 
+    public void setPacketType(PacketType packetType) {
+        this.packetType = packetType;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "Packet{" +
@@ -35,20 +43,5 @@ public class Packet<T extends NetworkSerializable> implements NetworkSerializabl
                 '}';
     }
 
-    @Override
-    public void serialize(Serializer serializer){
-        serializer.put(packetType.ordinal());
-        data.serialize(serializer);
-    }
 
-    @Override
-    public void unserialize(Deserializer deserializer) {
-        packetType = PacketType.values()[deserializer.nextInt()];
-        try {
-            data = (T)packetType.initializeModel();
-            data.unserialize(deserializer);
-        } catch (UnserializeException e) {
-            e.printStackTrace();
-        }
-    }
 }

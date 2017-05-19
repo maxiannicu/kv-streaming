@@ -13,18 +13,13 @@ public enum PacketType {
     INITITIALIZATION(InitializationMessage.class),
     CHAT_MESSAGE(ChatMessage.class);
 
-    private Class<? extends NetworkSerializable> model;
+    private Class mappedClass;
 
-    PacketType(Class model) {
-        this.model = model;
+    PacketType(Class mappedClass) {
+        this.mappedClass = mappedClass;
     }
 
-    public NetworkSerializable initializeModel() throws UnserializeException {
-        try {
-            Constructor constructor = model.getConstructor();
-            return (NetworkSerializable) constructor.newInstance();
-        } catch (Exception e) {
-            throw new UnserializeException("Unnable to create model for "+this.toString(),e);
-        }
+    public Class getMappedClass() {
+        return mappedClass;
     }
 }

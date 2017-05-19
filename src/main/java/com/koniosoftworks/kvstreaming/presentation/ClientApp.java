@@ -8,7 +8,10 @@ import com.google.inject.Injector;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.logging.LogLevel;
+import com.koniosoftworks.kvstreaming.domain.logging.Logger;
 import com.koniosoftworks.kvstreaming.presentation.di.ClientModule;
+import sun.rmi.runtime.Log;
 
 /**
  * Created by nicu on 5/15/17.

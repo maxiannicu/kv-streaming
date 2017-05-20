@@ -2,7 +2,6 @@ package com.koniosoftworks.kvstreaming.data.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +15,7 @@ import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
 import com.koniosoftworks.kvstreaming.utils.NameGenerator;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by nicu on 5/15/17.
@@ -24,24 +24,26 @@ public class ServerImpl implements Server {
     private final TaskScheduler taskScheduler;
     private final PacketSerialization packetSerialization;
     private final EncodingAlgorithm encodingAlgorithm;
+    private final Logger logger;
 
     private final Set<ClientConnection> connections = new HashSet<>();
     private ServerSocket serverSocket;
 
     @Inject
-    public ServerImpl(TaskScheduler taskScheduler, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm) {
+    public ServerImpl(TaskScheduler taskScheduler, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) {
         this.taskScheduler = taskScheduler;
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
+        this.logger = logger;
     }
 
     @Override
     public void start(int port) {
         try {
             serverSocket = new ServerSocket(port);
+            logger.info("Server started at "+serverSocket.getInetAddress().toString()+":"+serverSocket.getLocalPort());
             serverSocket.setSoTimeout(180000);
             taskScheduler.run(this::waitForConnections);
-            System.out.println("Server started on port "+port);
         } catch (IOException e) {
             e.printStackTrace();
         }

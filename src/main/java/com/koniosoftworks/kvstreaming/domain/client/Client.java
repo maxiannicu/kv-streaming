@@ -6,4 +6,5 @@ package com.koniosoftworks.kvstreaming.domain.client;
 public interface Client {
     void connect(ClientListener clientListener, String host, int port);
     void disconnect();
+    void sendMessage(String message);
 }

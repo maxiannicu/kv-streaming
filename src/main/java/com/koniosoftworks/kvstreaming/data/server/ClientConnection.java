@@ -4,7 +4,6 @@ import com.koniosoftworks.kvstreaming.data.core.Connection;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.dto.PacketType;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
-import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
@@ -12,7 +11,6 @@ import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Date;
 
 /**
  * Created by Nicu Maxian on 5/19/2017.
@@ -30,10 +28,23 @@ class ClientConnection extends Connection {
         this.username = username;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     void setUdpPort(int udpPort) {
         this.udpPort = udpPort;
     }
 
+    void sendMessage(ChatMessage chatMessage) {
+        Packet<ChatMessage> packet = new Packet<>(PacketType.CHAT_MESSAGE, chatMessage);
+        try {
+            send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+            //TODO handle here exception.
+        }
+    }
 
     void open() {
         Packet<InitializationMessage> packet = new Packet<>(PacketType.INITIALIZATION,
@@ -52,20 +63,6 @@ class ClientConnection extends Connection {
                 new DisconnectMessage("Server was closed"));
         try {
             send(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            //TODO handle here exception.
-        }
-    }
-
-    void sendMessage(ChatMessageRequest data){
-        String message = data.getMessage();
-
-        Packet<ChatMessage> packet = new Packet<>(PacketType.CHAT_MESSAGE,
-                new ChatMessage(username, message, new Date()));
-
-        try {
-            send(packet);
         } catch (IOException e) {
             e.printStackTrace();
             //TODO handle here exception.

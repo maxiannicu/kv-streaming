@@ -13,6 +13,7 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -28,12 +29,14 @@ public class ClientImpl implements Client {
     private final TaskScheduler taskScheduler;
     private ClientListener clientListener;
     private String username;
+    private final Logger logger;
 
     @Inject
-    public ClientImpl(PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, TaskScheduler taskScheduler) {
+    public ClientImpl(PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, TaskScheduler taskScheduler, Logger logger) {
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
         this.taskScheduler = taskScheduler;
+        this.logger = logger;
     }
 
     @Override
@@ -43,10 +46,11 @@ public class ClientImpl implements Client {
             Socket socket = new Socket(host, port);
             System.out.println("Connected to server");
             this.clientListener.onConnect();
-            serverConnection = new ServerConnection(socket, packetSerialization, encodingAlgorithm);
+            serverConnection = new ServerConnection(socket, packetSerialization, encodingAlgorithm,logger);
             taskScheduler.schedule(this::checkMessage, 100, TimeUnit.MILLISECONDS);
         } catch (IOException e) {
             clientListener.onConnectionFailed(e.toString());
+            logger.error(e);
             throw e;
         }
     }
@@ -56,7 +60,7 @@ public class ClientImpl implements Client {
         serverConnection.close();
         serverConnection = null;
         clientListener = null;
-        //TODO implement logic here.
+        logger.info("Disconnected");
     }
 
     @Override
@@ -65,8 +69,7 @@ public class ClientImpl implements Client {
         try {
             serverConnection.send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO log here exception.
+            logger.error(e);
         }
     }
 
@@ -92,8 +95,7 @@ public class ClientImpl implements Client {
                 }
 
             } catch (UnserializeException e) {
-                e.printStackTrace();
-                //TODO log here exception
+                logger.error(e);
             }
         }
     }

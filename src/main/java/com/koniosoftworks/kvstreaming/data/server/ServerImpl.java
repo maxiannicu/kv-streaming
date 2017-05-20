@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
+import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  * Created by nicu on 5/15/17.
@@ -29,11 +31,11 @@ public class ServerImpl implements Server {
     public void start(int port) {
         try {
             serverSocket = new ServerSocket(port);
-            logger.info("Server started at " + serverSocket.getInetAddress().toString() + ":" + serverSocket.getLocalPort());
+            logger.info("Server started at " + Formatting.getConnectionInfo(serverSocket));
             serverSocket.setSoTimeout(180000);
             taskScheduler.run(this::waitForConnections);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -44,20 +46,20 @@ public class ServerImpl implements Server {
             clientsPool.dropConnections();
             serverSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
     private void waitForConnections() {
-        System.out.println("Waiting for connections");
+        logger.info("Waiting for connections");
         while (!serverSocket.isClosed()) {
             if (clientsPool.getSize() < ServerProperties.MAX_CONNECTIONS_ALLOWED - 1) {
                 try {
-                    clientsPool.addNewClient(serverSocket.accept(), serverSocket.getLocalPort());
-                    System.out.println("Client connected");
+                    Socket socket = serverSocket.accept();
+                    clientsPool.addNewClient(socket, serverSocket.getLocalPort());
+                    logger.info("Client connected "+ Formatting.getConnectionInfo(socket));
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    //TODO handle here exception.
+                    logger.error(e);
                 }
             }
         }

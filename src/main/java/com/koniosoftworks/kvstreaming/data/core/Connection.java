@@ -8,6 +8,7 @@ import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,21 +22,24 @@ public abstract class Connection {
     private final EncodingAlgorithm encodingAlgorithm;
     private final StreamReader streamReader;
     private final StreamWriter streamWriter;
+    protected final Logger logger;
 
     protected boolean isAlive;
 
     public Connection(Socket socket, PacketSerialization packetSerialization,
-                      EncodingAlgorithm encodingAlgorithm) throws IOException {
+                      EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
         this.socket = socket;
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
         this.streamWriter =  new SimpleStreamWriter(socket.getOutputStream());
         this.streamReader = new ScannerStreamReader(socket.getInputStream());
+        this.logger = logger;
         this.isAlive = false;
     }
 
     public void send(Packet packet) throws IOException {
         byte[] bytes = encodingAlgorithm.encode(packetSerialization.serialize(packet));
+        logger.debug("Sending packet "+new String(bytes));
         streamWriter.put(new String(bytes));
         socket.getOutputStream().flush();
     }
@@ -48,10 +52,13 @@ public abstract class Connection {
         if(!hasReceivedPacket())
             throw new UnserializeException("No message to deserialize");
 
-        byte[] bytes = encodingAlgorithm.decode(streamReader.nextString().getBytes());
+        byte[] encodedBytes = streamReader.nextString().getBytes();
+        logger.debug("Received packet "+new String(encodedBytes));
+        byte[] bytes = encodingAlgorithm.decode(encodedBytes);
         try {
             return packetSerialization.unserialize(bytes);
         } catch (IOException e) {
+            logger.error(e);
             throw new RuntimeException("Failed to read packet");
         }
     }
@@ -62,8 +69,7 @@ public abstract class Connection {
                 socket.close();
                 isAlive = false;
             } catch (IOException e) {
-                e.printStackTrace();
-                //TODO handle exception here.
+                logger.debug(e);
             }
         }
     }

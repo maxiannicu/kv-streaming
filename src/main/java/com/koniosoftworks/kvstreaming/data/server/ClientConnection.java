@@ -8,6 +8,7 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -20,8 +21,8 @@ class ClientConnection extends Connection {
     private int udpPort;
     private String username;
 
-    ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm) throws IOException {
-        super(socket, packetSerialization, encodingAlgorithm);
+    ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
+        super(socket, packetSerialization, encodingAlgorithm, logger);
     }
 
     void setUsername(String username) {

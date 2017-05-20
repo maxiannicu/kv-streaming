@@ -10,6 +10,7 @@ import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.utils.NameGenerator;
 import com.sun.istack.internal.Nullable;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -25,11 +26,13 @@ public class ClientsPool {
     private final EncodingAlgorithm encodingAlgorithm;
     private final Set<ClientConnection> connections;
     private final List<ChatMessage> chatMessages;
+    private final Logger logger;
 
     @Inject
     public ClientsPool(TaskScheduler taskScheduler,
                        PacketSerialization packetSerialization,
-                       EncodingAlgorithm encodingAlgorithm) {
+                       EncodingAlgorithm encodingAlgorithm, Logger logger) {
+        this.logger = logger;
         this.connections = new HashSet<>();
         this.chatMessages = new ArrayList<>();
         this.packetSerialization = packetSerialization;
@@ -42,12 +45,11 @@ public class ClientsPool {
     void addNewClient(Socket socket, int udpPort) {
         ClientConnection clientConnection = null;
         try {
-            clientConnection = new ClientConnection(socket, packetSerialization, encodingAlgorithm);
+            clientConnection = new ClientConnection(socket, packetSerialization, encodingAlgorithm,logger);
             setupAndOpenConnection(udpPort, clientConnection);
             connections.add(clientConnection);
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO log here exception.
+            logger.error(e);
         }
     }
     private void setupAndOpenConnection(int udpPort,  ClientConnection clientConnection) {
@@ -62,14 +64,14 @@ public class ClientsPool {
             if (connection.hasReceivedPacket()) {
                 try {
                     Packet packet = connection.getPacket();
+                    logger.debug(packet);
 
                     if (packet.getPacketType() == PacketType.CHAT_MESSAGE_REQUEST) {
                         ChatMessageRequest data = (ChatMessageRequest) packet.getData();
                         dispatchMessage(connection, data);
                     }
                 } catch (UnserializeException e) {
-                    e.printStackTrace();
-                    //TODO logo here exception.
+                    logger.error(e);
                 }
             }
         }

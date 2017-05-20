@@ -1,7 +1,24 @@
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.text.Text?>
-<GridPane fx:controller="com.koniosoftworks.kvstreaming.presentation.ui.server.ServerScreenController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<?xml version="1.0" encoding="UTF-8"?>
 
-   <Text text="Hello Server"/>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.koniosoftworks.kvstreaming.presentation.ui.server.ServerScreenController">
+   <ButtonBar prefHeight="40.0" prefWidth="200.0">
+     <buttons>
+         <TextField promptText="TCP Port" text="31012" />
+       <Button mnemonicParsing="false" text="Start" />
+         <Button mnemonicParsing="false" text="Stop" />
+     </buttons>
+   </ButtonBar>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>

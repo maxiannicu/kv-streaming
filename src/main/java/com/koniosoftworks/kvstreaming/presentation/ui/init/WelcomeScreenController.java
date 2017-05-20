@@ -1,10 +1,12 @@
 package com.koniosoftworks.kvstreaming.presentation.ui.init;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.koniosoftworks.kvstreaming.presentation.ui.client.ClientScreen;
 import com.koniosoftworks.kvstreaming.presentation.ui.server.ServerScreen;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -12,15 +14,23 @@ import javafx.stage.Stage;
  * Created by lschidu on 5/18/17.
  */
 public class WelcomeScreenController {
+    private final Application clientApplication;
+    private final Application serverApplication;
 
     @FXML private Button startClientButton;
     @FXML private Button startServerButton;
+
+    @Inject
+    public WelcomeScreenController(@Named("client") Application clientApplication, @Named("server")Application serverApplication) {
+        this.clientApplication = clientApplication;
+        this.serverApplication = serverApplication;
+    }
 
 
     public void handleStartClient(ActionEvent actionEvent) {
         Stage stage = (Stage) startClientButton.getScene().getWindow();
         try {
-            ClientScreen.getINSTANCE().start(stage);
+            clientApplication.start(stage);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,7 +39,7 @@ public class WelcomeScreenController {
     public void handleStartServer(ActionEvent actionEvent) {
         Stage stage = (Stage) startServerButton.getScene().getWindow();
         try {
-            ServerScreen.getINSTANCE().start(stage);
+            serverApplication.start(stage);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,45 +1,44 @@
 package com.koniosoftworks.kvstreaming.data.server;
 
-import com.koniosoftworks.kvstreaming.data.io.ScannerStreamReader;
-import com.koniosoftworks.kvstreaming.data.io.SimpleStreamWriter;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
-import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * Created by Nicu Maxian on 5/19/2017.
  */
 public class ClientConnection {
-    private final Socket socket;
-    private final PacketSerialization packetSerialization;
-    private final EncodingAlgorithm encodingAlgorithm;
-    private final StreamReader streamReader;
-    private final StreamWriter streamWriter;
+    private Socket socket;
+    private PacketSerialization packetSerialization;
+    private EncodingAlgorithm encodingAlgorithm;
+    private StreamReader streamReader;
+    private StreamWriter streamWriter;
     private String username;
 
-    public ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm) throws IOException {
+    public ClientConnection(Socket socket,
+                            PacketSerialization packetSerialization,
+                            EncodingAlgorithm encodingAlgorithm,
+                            StreamReader streamReader,
+                            StreamWriter streamWriter) {
         this.socket = socket;
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
-        this.streamReader = new ScannerStreamReader(socket.getInputStream());
-        this.streamWriter = new SimpleStreamWriter(socket.getOutputStream());
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+        this.streamReader = streamReader;
+        this.streamWriter = streamWriter;
     }
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void send(Packet packet) throws IOException {
@@ -47,12 +46,12 @@ public class ClientConnection {
         streamWriter.put(new String(bytes));
     }
 
-    public boolean hasReceivedPacket(){
+    public boolean hasReceivedPacket() {
         return streamReader.hasNextString();
     }
 
     public Packet getPacket() throws UnserializeException {
-        if(!hasReceivedPacket())
+        if (!hasReceivedPacket())
             throw new UnserializeException("No message to deserialize");
 
         byte[] bytes = encodingAlgorithm.decode(streamReader.nextString().getBytes());

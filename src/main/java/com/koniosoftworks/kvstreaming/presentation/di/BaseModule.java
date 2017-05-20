@@ -13,7 +13,6 @@ import com.koniosoftworks.kvstreaming.data.io.algorithms.ChatMessageRequestSeria
 import com.koniosoftworks.kvstreaming.data.io.algorithms.ChatMessageSerializationAlgorithm;
 import com.koniosoftworks.kvstreaming.data.io.algorithms.InitializationMessageSerializationAlgorithm;
 import com.koniosoftworks.kvstreaming.data.io.algorithms.PacketSerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.data.logging.ConsoleLogger;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 import com.koniosoftworks.kvstreaming.domain.core.MessageBus;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
@@ -23,9 +22,8 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.SerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.domain.logging.LogLevel;
-import com.koniosoftworks.kvstreaming.domain.logging.Logger;
-import com.koniosoftworks.kvstreaming.domain.logging.LoggerBuilder;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Created by nicu on 5/16/17.
@@ -51,7 +49,6 @@ public abstract class BaseModule implements Module {
 
     @Provides
     Logger provideLogger() {
-        return new LoggerBuilder(new ConsoleLogger(LogLevel.ERROR))
-                .build();
+        return LogManager.getLogger();
     }
 }

@@ -3,6 +3,7 @@ package com.koniosoftworks.kvstreaming.presentation.ui.server;
 import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
+import com.koniosoftworks.kvstreaming.presentation.ui.BaseController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,7 +13,7 @@ import javafx.scene.control.TextField;
 /**
  * Created by lschidu on 5/18/17.
  */
-public class ServerScreenController {
+public class ServerScreenController extends BaseController {
     private final Server server;
     @FXML private Button startButton;
     @FXML private Button stopButton;

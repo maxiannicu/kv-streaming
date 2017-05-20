@@ -27,6 +27,7 @@ public class ClientImpl implements Client {
     private final EncodingAlgorithm encodingAlgorithm;
     private final TaskScheduler taskScheduler;
     private ClientListener clientListener;
+    private String username;
 
     @Inject
     public ClientImpl(PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, TaskScheduler taskScheduler) {
@@ -36,7 +37,7 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public void connect(ClientListener clientListener, String host, int port) {
+    public void connect(ClientListener clientListener, String host, int port) throws IOException {
         this.clientListener = clientListener;
         try {
             Socket socket = new Socket(host, port);
@@ -46,12 +47,15 @@ public class ClientImpl implements Client {
             taskScheduler.schedule(this::checkMessage, 100, TimeUnit.MILLISECONDS);
         } catch (IOException e) {
             clientListener.onConnectionFailed(e.toString());
-            e.printStackTrace();
+            throw e;
         }
     }
 
     @Override
     public void disconnect() {
+        serverConnection.close();
+        serverConnection = null;
+        clientListener = null;
         //TODO implement logic here.
     }
 
@@ -74,7 +78,9 @@ public class ClientImpl implements Client {
 
                 switch (packet.getPacketType()) {
                     case INITIALIZATION:
-                        clientListener.onInitializationMessage((InitializationMessage) packet.getData());
+                        InitializationMessage data = (InitializationMessage) packet.getData();
+                        username = data.getUsername();
+                        clientListener.onInitializationMessage(data);
                         break;
                     case CHAT_MESSAGE:
                         clientListener.onChatMessage((ChatMessage) packet.getData());
@@ -90,5 +96,12 @@ public class ClientImpl implements Client {
                 //TODO log here exception
             }
         }
+    }
+
+    @Override
+    public String getUsername() {
+        if(serverConnection == null)
+            throw new RuntimeException("Not connected");
+        return username;
     }
 }

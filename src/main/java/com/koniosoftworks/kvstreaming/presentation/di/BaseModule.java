@@ -5,17 +5,15 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.multibindings.MapBinder;
-import com.koniosoftworks.kvstreaming.data.concurrency.TaskSchedulerImpl;
-import com.koniosoftworks.kvstreaming.data.io.Base64Encoding;
-import com.koniosoftworks.kvstreaming.data.io.PacketSerializationImpl;
-import com.koniosoftworks.kvstreaming.data.io.algorithms.ChatMessageRequestSerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.data.io.algorithms.ChatMessageSerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.data.io.algorithms.InitializationMessageSerializationAlgorithm;
-import com.koniosoftworks.kvstreaming.data.io.algorithms.PacketSerializationAlgorithm;
+import com.koniosoftworks.kvstreaming.data.core.concurrency.TaskSchedulerImpl;
+import com.koniosoftworks.kvstreaming.data.core.io.Base64Encoding;
+import com.koniosoftworks.kvstreaming.data.core.io.PacketSerializationImpl;
+import com.koniosoftworks.kvstreaming.data.core.io.algorithms.*;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
@@ -42,6 +40,7 @@ public abstract class BaseModule implements Module {
         mapBinder.addBinding(InitializationMessage.class).to(InitializationMessageSerializationAlgorithm.class);
         mapBinder.addBinding(ChatMessage.class).to(ChatMessageSerializationAlgorithm.class);
         mapBinder.addBinding(ChatMessageRequest.class).to(ChatMessageRequestSerializationAlgorithm.class);
+        mapBinder.addBinding(DisconnectMessage.class).to(DisconnectMessageSerializationAlgorithm.class);
     }
 
     @Provides

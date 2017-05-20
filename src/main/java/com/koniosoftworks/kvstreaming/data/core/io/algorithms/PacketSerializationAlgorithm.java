@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.data.io.algorithms;
+package com.koniosoftworks.kvstreaming.data.core.io.algorithms;
 
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
 import com.koniosoftworks.kvstreaming.domain.dto.PacketType;

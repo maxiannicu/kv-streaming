@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.data.io;
+package com.koniosoftworks.kvstreaming.data.core.io;
 
 import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;

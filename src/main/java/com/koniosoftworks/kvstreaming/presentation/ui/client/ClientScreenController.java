@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.client.Client;
 import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,12 +18,18 @@ import javafx.scene.control.TextField;
 public class ClientScreenController implements ClientListener {
     private final Client client;
 
-    @FXML private Button connectButton;
-    @FXML private Button disconnectButton;
-    @FXML private Button sendButton;
-    @FXML private TextField messageTextField;
-    @FXML private TextField ipPort;
-    @FXML private TextArea textArea;
+    @FXML
+    private Button connectButton;
+    @FXML
+    private Button disconnectButton;
+    @FXML
+    private Button sendButton;
+    @FXML
+    private TextField messageTextField;
+    @FXML
+    private TextField ipPort;
+    @FXML
+    private TextArea textArea;
 
     @Inject
     public ClientScreenController(Client client) {
@@ -31,7 +38,7 @@ public class ClientScreenController implements ClientListener {
 
     public void handleConnectButton(ActionEvent actionEvent) {
         String[] split = ipPort.getText().split(":");
-        this.client.connect(this,split[0],Integer.valueOf(split[1]));
+        this.client.connect(this, split[0], Integer.valueOf(split[1]));
         setButtonsState(true);
     }
 
@@ -49,8 +56,9 @@ public class ClientScreenController implements ClientListener {
     }
 
     @Override
-    public void onDisconnect() {
+    public void onDisconnect(DisconnectMessage disconnectMessage) {
 
+        textArea.setText(String.format("%s", disconnectMessage.getMessage()));
     }
 
     @Override
@@ -60,18 +68,17 @@ public class ClientScreenController implements ClientListener {
 
     @Override
     public void onInitializationMessage(InitializationMessage initializationMessage) {
-        appendLine(String.format("Server: You was accepted with name %s",initializationMessage.getUsername()));
+        appendLine(String.format("Server: You was accepted with name %s", initializationMessage.getUsername()));
     }
 
     @Override
     public void onChatMessage(ChatMessage chatMessage) {
-        appendLine(String.format("%s[%s]:%s",chatMessage.getSender(),chatMessage.getSentOnUtc().toString(),chatMessage.getMessage()));
+        appendLine(String.format("%s[%s]:%s", chatMessage.getSender(), chatMessage.getSentOnUtc().toString(), chatMessage.getMessage()));
     }
 
-    private void appendLine(String line){
-
+    private void appendLine(String line) {
         String text = textArea.getText();
-        textArea.setText(String.format("%s\n%s",text,line));
+        textArea.setText(String.format("%s\n%s", text, line));
     }
 
     private void setButtonsState(boolean connected) {

@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.data.concurrency;
+package com.koniosoftworks.kvstreaming.data.core.concurrency;
 
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 

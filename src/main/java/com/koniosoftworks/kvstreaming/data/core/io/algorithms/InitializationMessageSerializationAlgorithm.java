@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.data.io.algorithms;
+package com.koniosoftworks.kvstreaming.data.core.io.algorithms;
 
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.StreamReader;

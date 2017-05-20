@@ -1,9 +1,8 @@
 package com.koniosoftworks.kvstreaming.domain.client;
 
 
-import java.awt.image.BufferedImage;
-
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 
 /**
@@ -11,7 +10,7 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
  */
 public interface ClientListener {
     void onConnect();
-    void onDisconnect();
+    void onDisconnect(DisconnectMessage disconectMessage);
     void onConnectionFailed(String message);
     void onInitializationMessage(InitializationMessage initializationMessage);
     void onChatMessage(ChatMessage chatMessage);

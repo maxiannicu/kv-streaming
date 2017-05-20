@@ -1,4 +1,4 @@
-package com.koniosoftworks.kvstreaming.data.io;
+package com.koniosoftworks.kvstreaming.data.core.io;
 
 import java.io.InputStream;
 import java.util.Scanner;

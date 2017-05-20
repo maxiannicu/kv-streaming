@@ -1,10 +1,0 @@
-
-Vsquid:S1161":Add the "@Override" annotation above this method signature(“–ış8š´¯œÀ+
-qsquid:S1450"URemove the "server" field and declare it as a local variable in the relevant methods.(İ§üø8·Ù•·À+
-qsquid:S1450"URemove the "window" field and declare it as a local variable in the relevant methods.(àŠÊ¨8™‡±¸À+
-ksquid:S2674"JCheck the return value of the "skip" call to see how many bytes were read.(ú±Ñ”ÿÿÿÿÿ8ıõ¸´À+
-Asquid:S1166"%Either log or rethrow this exception.(ï­£Ä8áÛ«À+
-dsquid:S1226"CIntroduce a new variable instead of reusing the parameter "stream".(³‰ÿÿÿÿÿ8ìø·´À+
-y
-squid:S135"YReduce the total number of break and continue statements in this loop to use at most one.(˜ïˆÿÿÿÿÿ8ìø·´À+
-Dsquid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8áÛ«À+

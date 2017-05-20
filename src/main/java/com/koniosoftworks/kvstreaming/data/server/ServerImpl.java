@@ -53,7 +53,7 @@ public class ServerImpl implements Server {
         while (!serverSocket.isClosed()) {
             if (clientsPool.getSize() < ServerProperties.MAX_CONNECTIONS_ALLOWED - 1) {
                 try {
-                    clientsPool.addNewClient(serverSocket.accept());
+                    clientsPool.addNewClient(serverSocket.accept(), serverSocket.getLocalPort());
                     System.out.println("Client connected");
                 } catch (IOException e) {
                     e.printStackTrace();

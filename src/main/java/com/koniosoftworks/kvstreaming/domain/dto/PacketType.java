@@ -1,17 +1,16 @@
 package com.koniosoftworks.kvstreaming.domain.dto;
 
-import java.lang.reflect.Constructor;
-
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
-import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
 
 /**
  * Created by nicu on 5/16/17.
  */
 public enum PacketType {
     INITITIALIZATION(InitializationMessage.class),
-    CHAT_MESSAGE(ChatMessage.class);
+    CHAT_MESSAGE(ChatMessage.class),
+    CHAT_MESSAGE_REQUEST(ChatMessageRequest.class);
 
     private Class mappedClass;
 

@@ -1,10 +1,10 @@
 package com.koniosoftworks.kvstreaming.data.core.io;
 
-import java.io.InputStream;
-import java.util.Scanner;
-
 import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
+
+import java.io.InputStream;
+import java.util.Scanner;
 
 /**
  * Created by nicu on 5/17/17.

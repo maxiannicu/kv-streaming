@@ -8,6 +8,7 @@ import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
 import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
+import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public abstract class Connection {
 
     public void send(Packet packet) throws IOException {
         byte[] bytes = encodingAlgorithm.encode(packetSerialization.serialize(packet));
-        logger.debug("Sending packet "+new String(bytes));
+        logger.debug("Sending packet "+new String(bytes)+ " to "+ Formatting.getConnectionInfo(socket));
         streamWriter.put(new String(bytes));
         socket.getOutputStream().flush();
     }

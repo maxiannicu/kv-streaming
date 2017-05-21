@@ -47,7 +47,7 @@ public class ClientImpl implements Client {
             System.out.println("Connected to server");
             this.clientListener.onConnect();
             serverConnection = new ServerConnection(socket, packetSerialization, encodingAlgorithm,logger);
-            taskScheduler.schedule(this::checkMessage, 100, TimeUnit.MILLISECONDS);
+            taskScheduler.run(this::checkMessage);
         } catch (IOException e) {
             clientListener.onConnectionFailed(e.toString());
             logger.error(e);
@@ -60,6 +60,7 @@ public class ClientImpl implements Client {
         serverConnection.close();
         serverConnection = null;
         clientListener = null;
+        taskScheduler.unschedule(this::checkMessage);
         logger.info("Disconnected");
     }
 
@@ -74,28 +75,29 @@ public class ClientImpl implements Client {
     }
 
     private void checkMessage() {
-        if (serverConnection.hasReceivedPacket()) {
+        while (true) {
+            if (serverConnection.hasReceivedPacket()) {
+                try {
+                    Packet packet = serverConnection.getPacket();
 
-            try {
-                Packet packet = serverConnection.getPacket();
+                    switch (packet.getPacketType()) {
+                        case INITIALIZATION:
+                            InitializationMessage data = (InitializationMessage) packet.getData();
+                            username = data.getUsername();
+                            clientListener.onInitializationMessage(data);
+                            break;
+                        case CHAT_MESSAGE:
+                            clientListener.onChatMessage((ChatMessage) packet.getData());
+                            break;
+                        case DISCONNECT:
+                            clientListener.onDisconnect((DisconnectMessage) packet.getData());
+                            serverConnection.close();
+                            break;
+                    }
 
-                switch (packet.getPacketType()) {
-                    case INITIALIZATION:
-                        InitializationMessage data = (InitializationMessage) packet.getData();
-                        username = data.getUsername();
-                        clientListener.onInitializationMessage(data);
-                        break;
-                    case CHAT_MESSAGE:
-                        clientListener.onChatMessage((ChatMessage) packet.getData());
-                        break;
-                    case DISCONNECT:
-                        clientListener.onDisconnect((DisconnectMessage) packet.getData());
-                        serverConnection.close();
-                        break;
+                } catch (UnserializeException e) {
+                    logger.error(e);
                 }
-
-            } catch (UnserializeException e) {
-                logger.error(e);
             }
         }
     }

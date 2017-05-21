@@ -3,7 +3,9 @@ package com.koniosoftworks.kvstreaming.data.core.concurrency;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -12,11 +14,13 @@ import java.util.concurrent.*;
 public class TaskSchedulerImpl implements TaskScheduler {
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
     private Map<Runnable,ScheduledFuture> runnableScheduledFutureMap = new HashMap<>();
+    private Map<Runnable,Thread> threads = new HashMap<>();
 
     @Override
     public void run(Runnable runnable) {
-        ScheduledFuture<?> schedule = executorService.schedule(runnable, 0, TimeUnit.SECONDS);
-        runnableScheduledFutureMap.put(runnable,schedule);
+        Thread thread = new Thread(runnable);
+        threads.put(runnable,thread);
+        thread.start();
     }
 
     @Override
@@ -30,6 +34,11 @@ public class TaskSchedulerImpl implements TaskScheduler {
         if(runnableScheduledFutureMap.containsKey(runnable)){
             runnableScheduledFutureMap.get(runnable).cancel(true);
             runnableScheduledFutureMap.remove(runnable);
+        }
+        if(threads.containsKey(runnable)){
+            Thread thread = threads.get(runnable);
+            thread.interrupt();
+            threads.remove(runnable);
         }
     }
 

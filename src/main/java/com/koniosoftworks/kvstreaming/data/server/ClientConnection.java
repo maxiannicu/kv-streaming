@@ -18,7 +18,6 @@ import java.net.Socket;
  */
 
 class ClientConnection extends Connection {
-    private int udpPort;
     private String username;
 
     ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
@@ -33,10 +32,6 @@ class ClientConnection extends Connection {
         return username;
     }
 
-    void setUdpPort(int udpPort) {
-        this.udpPort = udpPort;
-    }
-
     void sendMessage(ChatMessage chatMessage) {
         Packet<ChatMessage> packet = new Packet<>(PacketType.CHAT_MESSAGE, chatMessage);
         try {
@@ -49,7 +44,7 @@ class ClientConnection extends Connection {
 
     void open() {
         Packet<InitializationMessage> packet = new Packet<>(PacketType.INITIALIZATION,
-                new InitializationMessage(udpPort, username));
+                new InitializationMessage(username));
 
         try {
             send(packet);

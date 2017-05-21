@@ -11,13 +11,11 @@ import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
 public class InitializationMessageSerializationAlgorithm implements SerializationAlgorithm<InitializationMessage> {
     @Override
     public void serialize(StreamWriter streamWriter, InitializationMessage object) {
-        streamWriter.put(object.getUdpPort());
         streamWriter.put(object.getUsername());
     }
 
     @Override
     public void deserialize(StreamReader streamReader, InitializationMessage object) {
-        object.setUdpPort(streamReader.nextInt());
         object.setUsername(streamReader.nextString());
     }
 }

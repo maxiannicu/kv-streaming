@@ -8,6 +8,7 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
+import com.koniosoftworks.kvstreaming.utils.Formatting;
 import com.koniosoftworks.kvstreaming.utils.NameGenerator;
 import com.sun.istack.internal.Nullable;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +17,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by max on 5/20/17.
@@ -27,40 +27,55 @@ public class ClientsPool {
     private final Set<ClientConnection> connections;
     private final List<ChatMessage> chatMessages;
     private final Logger logger;
+    private final TaskScheduler taskScheduler;
+    private final Set<Runnable> runningRunnables = new HashSet<>();
 
     @Inject
-    public ClientsPool(TaskScheduler taskScheduler,
-                       PacketSerialization packetSerialization,
-                       EncodingAlgorithm encodingAlgorithm, Logger logger) {
+    public ClientsPool(
+            PacketSerialization packetSerialization,
+            EncodingAlgorithm encodingAlgorithm, Logger logger, TaskScheduler taskScheduler) {
         this.logger = logger;
+        this.taskScheduler = taskScheduler;
         this.connections = new HashSet<>();
         this.chatMessages = new ArrayList<>();
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
 
-        taskScheduler.schedule(this::checkForMessageRequest, 100, TimeUnit.MILLISECONDS);
     }
 
     @Nullable
-    void addNewClient(Socket socket, int udpPort) {
+    void addNewClient(Socket socket) {
         ClientConnection clientConnection = null;
         try {
-            clientConnection = new ClientConnection(socket, packetSerialization, encodingAlgorithm,logger);
-            setupAndOpenConnection(udpPort, clientConnection);
+            clientConnection = new ClientConnection(socket, packetSerialization, encodingAlgorithm, logger);
+            setupAndOpenConnection(clientConnection);
             connections.add(clientConnection);
+            logger.info("Client connected "+ Formatting.getConnectionInfo(socket));
         } catch (IOException e) {
             logger.error(e);
         }
     }
-    private void setupAndOpenConnection(int udpPort,  ClientConnection clientConnection) {
+
+    private void setupAndOpenConnection(ClientConnection clientConnection) {
         clientConnection.setUsername(NameGenerator.generateName());
-        clientConnection.setUdpPort(udpPort);
         clientConnection.open();
         chatMessages.forEach(clientConnection::sendMessage);
+
+        Runnable runnable = () -> checkForMessageRequest(clientConnection);
+        runningRunnables.add(runnable);
+        taskScheduler.run(runnable);
     }
 
-    private void checkForMessageRequest() {
-        for (ClientConnection connection : connections) {
+
+    public void dropConnections() {
+        logger.info("Droping all active connections");
+        connections.forEach(ClientConnection::drop);
+        runningRunnables.forEach(taskScheduler::unschedule);
+        connections.clear();
+    }
+
+    private void checkForMessageRequest(ClientConnection connection) {
+        while (true) {
             if (connection.hasReceivedPacket()) {
                 try {
                     Packet packet = connection.getPacket();
@@ -83,16 +98,11 @@ public class ClientsPool {
         chatMessages.add(chatMessage);
     }
 
-    private ChatMessage getChatMessage(ClientConnection connection, ChatMessageRequest chatMessageRequest){
+    private ChatMessage getChatMessage(ClientConnection connection, ChatMessageRequest chatMessageRequest) {
         return new ChatMessage(connection.getUsername(), chatMessageRequest.getMessage(), new Date());
     }
 
-    int getSize() {
+    public int getSize() {
         return connections.size();
-    }
-
-    public void dropConnections() {
-        connections.forEach(ClientConnection::drop);
-        connections.clear();
     }
 }

@@ -6,6 +6,7 @@ import com.koniosoftworks.kvstreaming.domain.client.ClientListener;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
+import com.koniosoftworks.kvstreaming.presentation.ui.server.TextAreaAppender;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -40,6 +41,8 @@ public class ClientScreenController implements ClientListener {
         String[] split = ipPort.getText().split(":");
         this.client.connect(this, split[0], Integer.valueOf(split[1]));
         setButtonsState(true);
+
+        TextAreaAppender.logTextArea = textArea;
     }
 
     public void handleDisconnectButton(ActionEvent actionEvent) {

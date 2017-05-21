@@ -22,6 +22,7 @@ public class ServerScreenController {
     @Inject
     public ServerScreenController(Server server) {
         this.server = server;
+        TextAreaAppender.logTextArea = textArea;
     }
 
     public void handleStartButton(ActionEvent actionEvent) {

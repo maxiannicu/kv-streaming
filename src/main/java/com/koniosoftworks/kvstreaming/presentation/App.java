@@ -5,6 +5,9 @@ import com.google.inject.Injector;
 import com.koniosoftworks.kvstreaming.presentation.di.AppModule;
 import com.koniosoftworks.kvstreaming.presentation.ui.init.WelcomeScreen;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
 
 /**
  * Created by nicu on 5/20/17.

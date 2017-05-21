@@ -75,7 +75,7 @@ public class ClientImpl implements Client {
     }
 
     private void checkMessage() {
-        while (true) {
+        while (serverConnection.isAlive()) {
             if (serverConnection.hasReceivedPacket()) {
                 try {
                     Packet packet = serverConnection.getPacket();

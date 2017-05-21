@@ -15,7 +15,6 @@ public class Main extends Application {
         primaryStage.show();
         SampleServer server = new SampleServer(6066);
         server.start();
-
     }
 
     public static void main(String[] args) {

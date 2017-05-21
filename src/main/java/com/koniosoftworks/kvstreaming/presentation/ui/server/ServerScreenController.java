@@ -38,7 +38,6 @@ public class ServerScreenController extends BaseController {
     //todo
     public void onChatMessageRequest(ChatMessageRequest request){
         String text = this.textArea.getText();
-
         this.textArea.setText(String.format("%s\nMessageRequest:%s",text,request.getMessage()));
     }
 

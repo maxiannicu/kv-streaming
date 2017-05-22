@@ -1,92 +1,108 @@
 package com.koniosoftworks.kvstreaming.data.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
-import com.koniosoftworks.kvstreaming.domain.dto.Packet;
-import com.koniosoftworks.kvstreaming.domain.dto.PacketType;
-import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
-import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
-import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
-import com.koniosoftworks.kvstreaming.utils.NameGenerator;
+import com.koniosoftworks.kvstreaming.domain.video.RealTimeStreamingAlgorithm;
+import com.koniosoftworks.kvstreaming.domain.video.StaticStreamingAlgorithm;
+import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.net.*;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by nicu on 5/15/17.
  */
 public class ServerImpl implements Server {
-    private final TaskScheduler taskScheduler;
-    private final PacketSerialization packetSerialization;
-    private final EncodingAlgorithm encodingAlgorithm;
-    private final Logger logger;
-
-    private final Set<ClientConnection> connections = new HashSet<>();
     private ServerSocket serverSocket;
+    private final ClientsPool clientsPool;
+    private final TaskScheduler taskScheduler;
+    private final Logger logger;
+    private DatagramSocket datagramSocket;
+    private Runnable videoStreamingRunnable;
 
     @Inject
-    public ServerImpl(TaskScheduler taskScheduler, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) {
+    public ServerImpl(TaskScheduler taskScheduler, ClientsPool clientsPool, Logger logger) {
         this.taskScheduler = taskScheduler;
-        this.packetSerialization = packetSerialization;
-        this.encodingAlgorithm = encodingAlgorithm;
+        this.clientsPool = clientsPool;
         this.logger = logger;
     }
 
     @Override
-    public void start(int port) {
+    public void start(int tcpPort) {
         try {
-            serverSocket = new ServerSocket(port);
-            logger.info("Server started at "+serverSocket.getInetAddress().toString()+":"+serverSocket.getLocalPort());
-            serverSocket.setSoTimeout(180000);
+            serverSocket = new ServerSocket(tcpPort);
+            datagramSocket = new DatagramSocket();
+            datagramSocket.setBroadcast(true);
+            logger.info("TCP Server started at " + Formatting.getConnectionInfo(serverSocket));
+            logger.info("UDP Server started at " + Formatting.getConnectionInfo(datagramSocket));
             taskScheduler.run(this::waitForConnections);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
     @Override
     public void stop() {
         try {
-            serverSocket.close();
             taskScheduler.stopAll();
+            clientsPool.dropConnections();
+            serverSocket.close();
+            stopStreaming();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
-    private void waitForConnections(){
-        System.out.println("Waiting for connections");
-        while (true){
-            if(connections.size() < ServerProperties.MAX_CONNECTIONS_ALLOWED-1) {
+    @Override
+    public void startStreaming(StaticStreamingAlgorithm algorithm) {
+        //todo
+    }
+
+    @Override
+    public void startStreaming(RealTimeStreamingAlgorithm algorithm) {
+        videoStreamingRunnable = () -> {
+            byte[] currentImage;
+            try {
+                currentImage = algorithm.getCurrentImage();
+
+                logger.debug("Sending image with size of "+currentImage.length+" bytes");
+
+                DatagramPacket datagramPacket = null;
+                datagramPacket = new DatagramPacket(currentImage, currentImage.length, InetAddress.getByName(ServerProperties.BROADCAST_SENDING), 23456);
+                datagramSocket.send(datagramPacket);
+            } catch (IOException e) {
+                logger.error(e);
+            }
+        };
+
+        taskScheduler.schedule(videoStreamingRunnable,ServerProperties.VIDEO_STREAMING_INTERVAL_SENDING, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void stopStreaming() {
+        if(videoStreamingRunnable != null){
+            taskScheduler.unschedule(videoStreamingRunnable);
+            videoStreamingRunnable = null;
+        }
+    }
+
+    private void waitForConnections() {
+        logger.info("Waiting for connections");
+        while (!serverSocket.isClosed()) {
+            if (clientsPool.getSize() < ServerProperties.MAX_CONNECTIONS_ALLOWED - 1) {
                 try {
-                    ClientConnection clientConnection = new ClientConnection(serverSocket.accept(), packetSerialization,encodingAlgorithm);
-                    System.out.println("Client connected");
-                    connections.add(clientConnection);
-                    onClientConnected(clientConnection);
+                    Socket socket = serverSocket.accept();
+                    clientsPool.addNewClient(socket);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
             }
         }
     }
 
-    private void onClientConnected(ClientConnection connection) {
-        Packet<InitializationMessage> message = new Packet<>(PacketType.INITITIALIZATION, new InitializationMessage(serverSocket.getLocalPort(),NameGenerator.generateName()));
-
-        try {
-            connection.send(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void onConnectionClosed(ClientConnection connection){
-        connections.remove(connection);
-        //todo send message to chat or whetever
-    }
 }

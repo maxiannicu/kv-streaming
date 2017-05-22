@@ -16,6 +16,7 @@
                         <TextField fx:id="tcpPortTextField" promptText="TCP Port" text="31012" />
                         <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#handleStartButton" text="Start" />
                         <Button fx:id="stopButton" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#handleStopButton" text="Stop" />
+                  <Button fx:id="startScreenRecordingButton" mnemonicParsing="false" onAction="#handleStartScreenRecordingButton" text="Screen recording" />
                     </buttons>
                 </ButtonBar>
             </top>

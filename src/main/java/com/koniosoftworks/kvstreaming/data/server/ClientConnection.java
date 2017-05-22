@@ -1,65 +1,61 @@
 package com.koniosoftworks.kvstreaming.data.server;
 
-import com.koniosoftworks.kvstreaming.data.io.ScannerStreamReader;
-import com.koniosoftworks.kvstreaming.data.io.SimpleStreamWriter;
+import com.koniosoftworks.kvstreaming.data.core.Connection;
 import com.koniosoftworks.kvstreaming.domain.dto.Packet;
-import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
+import com.koniosoftworks.kvstreaming.domain.dto.PacketType;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
-import com.koniosoftworks.kvstreaming.domain.io.StreamReader;
-import com.koniosoftworks.kvstreaming.domain.io.StreamWriter;
-import com.koniosoftworks.kvstreaming.domain.props.MessagingProperties;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * Created by Nicu Maxian on 5/19/2017.
  */
-public class ClientConnection {
-    private final Socket socket;
-    private final PacketSerialization packetSerialization;
-    private final EncodingAlgorithm encodingAlgorithm;
-    private final StreamReader streamReader;
-    private final StreamWriter streamWriter;
+
+class ClientConnection extends Connection {
     private String username;
 
-    public ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm) throws IOException {
-        this.socket = socket;
-        this.packetSerialization = packetSerialization;
-        this.encodingAlgorithm = encodingAlgorithm;
-        this.streamReader = new ScannerStreamReader(socket.getInputStream());
-        this.streamWriter = new SimpleStreamWriter(socket.getOutputStream());
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
+        super(socket, packetSerialization, encodingAlgorithm, logger);
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void send(Packet packet) throws IOException {
-        byte[] bytes = encodingAlgorithm.encode(packetSerialization.serialize(packet));
-        streamWriter.put(new String(bytes));
-    }
-
-    public boolean hasReceivedPacket(){
-        return streamReader.hasNextString();
-    }
-
-    public Packet getPacket() throws UnserializeException {
-        if(!hasReceivedPacket())
-            throw new UnserializeException("No message to deserialize");
-
-        byte[] bytes = encodingAlgorithm.decode(streamReader.nextString().getBytes());
+    public void sendMessage(ChatMessage chatMessage) {
+        Packet<ChatMessage> packet = new Packet<>(PacketType.CHAT_MESSAGE, chatMessage);
         try {
-            return packetSerialization.unserialize(bytes);
+            send(packet);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read packet");
+            logger.error(e);
+        }
+    }
+
+    public void open(String username) {
+        this.username = username;
+        Packet<InitializationMessage> packet = new Packet<>(PacketType.INITIALIZATION,
+                new InitializationMessage(username));
+
+        try {
+            send(packet);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+    }
+
+    void drop() {
+        Packet<DisconnectMessage> message = new Packet<>(PacketType.DISCONNECT,
+                new DisconnectMessage("Server was closed"));
+        try {
+            send(message);
+        } catch (IOException e) {
+            logger.error(e);
         }
     }
 

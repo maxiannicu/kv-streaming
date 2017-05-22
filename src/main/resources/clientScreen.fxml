@@ -15,7 +15,7 @@
                     <buttons>
                         <TextField fx:id="ipPort" promptText="Put server TCP ip:port" text="127.0.0.1:31012" />
                         <Button fx:id="connectButton" defaultButton="true" mnemonicParsing="false" onAction="#handleConnectButton" text="Connect" />
-                        <Button fx:id="disconnectButton" cancelButton="true" disable="true" mnemonicParsing="false" onAction="#handleDisconnectButton" text="Disconnect" />
+                        <Button fx:id="disconnectButton" cancelButton="true" mnemonicParsing="false" onAction="#handleDisconnectButton" text="Disconnect" />
                     </buttons>
                 </ButtonBar>
             </top>
@@ -25,8 +25,8 @@
          <bottom>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
-                <TextField fx:id="messageTextField" />
-                <Button fx:id="sendButton" mnemonicParsing="false" text="Send" onAction="#handleSendButton"/>
+                <TextField fx:id="messageTextField" onKeyPressed="#handleTextMessageKeyEvent" />
+                <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleSendButton" text="Send" />
               </buttons>
             </ButtonBar>
          </bottom>

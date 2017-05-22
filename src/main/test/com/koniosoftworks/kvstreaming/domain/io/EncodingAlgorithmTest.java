@@ -1,10 +1,8 @@
 package com.koniosoftworks.kvstreaming.domain.io;
 
-import com.koniosoftworks.kvstreaming.data.io.Base64Encoding;
+import com.koniosoftworks.kvstreaming.data.core.io.Base64Encoding;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Random;
 
 import static org.junit.Assert.*;
 

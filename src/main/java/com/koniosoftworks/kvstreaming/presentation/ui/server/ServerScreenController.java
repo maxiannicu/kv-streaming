@@ -2,6 +2,7 @@ package com.koniosoftworks.kvstreaming.presentation.ui.server;
 
 import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.data.video.ScreenRecordAlgorithm;
+import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
 import com.koniosoftworks.kvstreaming.presentation.ui.BaseController;
 import javafx.event.ActionEvent;

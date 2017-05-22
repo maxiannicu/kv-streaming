@@ -78,7 +78,7 @@ public class ClientImpl implements Client {
     }
 
     private void checkMessage() {
-        while (true) {
+        while (serverConnection.isAlive()) {
             if (serverConnection.hasReceivedPacket()) {
                 try {
                     Packet packet = serverConnection.getPacket();
@@ -120,6 +120,7 @@ public class ClientImpl implements Client {
             byte[] buf = new byte[60000];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             while (true) {
+                logger.info("Waiting to receive UDP packet");
                 datagramSocket.receive(packet);
                 byte[] bytes = Arrays.copyOf(buf, packet.getLength());
 

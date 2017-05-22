@@ -66,21 +66,23 @@ public class ServerImpl implements Server {
     @Override
     public void startStreaming(RealTimeStreamingAlgorithm algorithm) {
         videoStreamingRunnable = () -> {
-            byte[] currentImage;
-            try {
-                currentImage = algorithm.getCurrentImage();
+            while (true) {
+                byte[] currentImage;
+                try {
+                    currentImage = algorithm.getCurrentImage();
 
-                logger.debug("Sending image with size of "+currentImage.length+" bytes");
+                    logger.debug("Sending image with size of " + currentImage.length + " bytes");
 
-                DatagramPacket datagramPacket = null;
-                datagramPacket = new DatagramPacket(currentImage, currentImage.length, InetAddress.getByName(ServerProperties.BROADCAST_SENDING), 23456);
-                datagramSocket.send(datagramPacket);
-            } catch (IOException e) {
-                logger.error(e);
+                    DatagramPacket datagramPacket = null;
+                    datagramPacket = new DatagramPacket(currentImage, currentImage.length, InetAddress.getByName(ServerProperties.BROADCAST_SENDING), ServerProperties.BROADCAST_PORT);
+                    datagramSocket.send(datagramPacket);
+                } catch (IOException e) {
+                    logger.error(e);
+                }
             }
         };
 
-        taskScheduler.schedule(videoStreamingRunnable,ServerProperties.VIDEO_STREAMING_INTERVAL_SENDING, TimeUnit.MILLISECONDS);
+        taskScheduler.run(videoStreamingRunnable);
     }
 
     @Override

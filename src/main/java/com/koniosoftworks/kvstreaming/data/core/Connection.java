@@ -27,6 +27,10 @@ public abstract class Connection {
 
     protected boolean isAlive;
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+
     public Connection(Socket socket, PacketSerialization packetSerialization,
                       EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
         this.socket = socket;
@@ -35,7 +39,7 @@ public abstract class Connection {
         this.streamWriter =  new SimpleStreamWriter(socket.getOutputStream());
         this.streamReader = new ScannerStreamReader(socket.getInputStream());
         this.logger = logger;
-        this.isAlive = false;
+        this.isAlive = true;
     }
 
     public void send(Packet packet) throws IOException {

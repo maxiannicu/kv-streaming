@@ -10,14 +10,15 @@ import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.ChatMessageRequest;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.DisconnectMessage;
 import com.koniosoftworks.kvstreaming.domain.dto.messages.InitializationMessage;
-import com.koniosoftworks.kvstreaming.domain.exception.UnserializeException;
 import com.koniosoftworks.kvstreaming.domain.io.EncodingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.io.PacketSerialization;
+import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
+import com.koniosoftworks.kvstreaming.utils.ImageConverter;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.util.concurrent.TimeUnit;
+import java.net.*;
+import java.util.Arrays;
 
 /**
  * Created by nicu on 5/15/17.
@@ -30,6 +31,7 @@ public class ClientImpl implements Client {
     private ClientListener clientListener;
     private String username;
     private final Logger logger;
+    private DatagramSocket datagramSocket;
 
     @Inject
     public ClientImpl(PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, TaskScheduler taskScheduler, Logger logger) {
@@ -61,6 +63,7 @@ public class ClientImpl implements Client {
         serverConnection = null;
         clientListener = null;
         taskScheduler.unschedule(this::checkMessage);
+        taskScheduler.unschedule(this::listenUdp);
         logger.info("Disconnected");
     }
 
@@ -85,6 +88,7 @@ public class ClientImpl implements Client {
                             InitializationMessage data = (InitializationMessage) packet.getData();
                             username = data.getUsername();
                             clientListener.onInitializationMessage(data);
+                            taskScheduler.run(this::listenUdp);
                             break;
                         case CHAT_MESSAGE:
                             clientListener.onChatMessage((ChatMessage) packet.getData());
@@ -95,7 +99,7 @@ public class ClientImpl implements Client {
                             break;
                     }
 
-                } catch (UnserializeException e) {
+                } catch (Exception e) {
                     logger.error(e);
                 }
             }
@@ -107,5 +111,22 @@ public class ClientImpl implements Client {
         if(serverConnection == null)
             throw new RuntimeException("Not connected");
         return username;
+    }
+
+    private void listenUdp() {
+        try {
+            datagramSocket = new DatagramSocket(ServerProperties.BROADCAST_PORT,InetAddress.getByName(ServerProperties.BROADCAST_LISTENING));
+
+            byte[] buf = new byte[60000];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            while (true) {
+                datagramSocket.receive(packet);
+                byte[] bytes = Arrays.copyOf(buf, packet.getLength());
+
+                clientListener.onNewStreamingImage(ImageConverter.byteArrayToImage(bytes));
+            }
+        } catch (Exception e) {
+            logger.error(e);
+        }
     }
 }

@@ -12,12 +12,10 @@ public class InitializationMessageSerializationAlgorithm implements Serializatio
     @Override
     public void serialize(StreamWriter streamWriter, InitializationMessage object) {
         streamWriter.put(object.getUsername());
-        streamWriter.put(object.getUdpPort());
     }
 
     @Override
     public void deserialize(StreamReader streamReader, InitializationMessage object) {
         object.setUsername(streamReader.nextString());
-        object.setUdpPort(streamReader.nextInt());
     }
 }

@@ -11,4 +11,5 @@ public interface Client {
     void sendMessage(String message);
 
     String getUsername();
+
 }

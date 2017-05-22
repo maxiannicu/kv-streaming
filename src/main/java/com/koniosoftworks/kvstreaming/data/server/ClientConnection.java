@@ -37,10 +37,10 @@ class ClientConnection extends Connection {
         }
     }
 
-    public void open(String username, int udpPort) {
+    public void open(String username) {
         this.username = username;
         Packet<InitializationMessage> packet = new Packet<>(PacketType.INITIALIZATION,
-                new InitializationMessage(username, udpPort));
+                new InitializationMessage(username));
 
         try {
             send(packet);

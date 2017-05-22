@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.AudioClip;
@@ -101,6 +102,11 @@ public class ClientScreenController extends BaseController implements ClientList
         }
 
         appendLine(String.format("[%s]%s : %s", dateFormat.format(chatMessage.getSentOnUtc()), chatMessage.getSender(), chatMessage.getMessage()));
+    }
+
+    @Override
+    public void onNewStreamingImage(Image image) {
+
     }
 
     private void appendLine(String line) {

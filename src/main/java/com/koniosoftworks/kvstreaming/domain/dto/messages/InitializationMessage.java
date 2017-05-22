@@ -5,11 +5,9 @@ package com.koniosoftworks.kvstreaming.domain.dto.messages;
  */
 public class InitializationMessage {
     private String username;
-    private int udpPort;
 
-    public InitializationMessage(String username, int udpPort) {
+    public InitializationMessage(String username) {
         this.username = username;
-        this.udpPort = udpPort;
     }
 
     public InitializationMessage() {
@@ -25,19 +23,10 @@ public class InitializationMessage {
         this.username = username;
     }
 
-    public int getUdpPort() {
-        return udpPort;
-    }
-
-    public void setUdpPort(int udpPort) {
-        this.udpPort = udpPort;
-    }
-
     @Override
     public String toString() {
         return "InitializationMessage{" +
                 "username='" + username + '\'' +
-                ", udpPort=" + udpPort +
                 '}';
     }
 }

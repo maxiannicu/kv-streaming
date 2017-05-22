@@ -1,7 +1,9 @@
 package com.koniosoftworks.kvstreaming.data.video;
 
+import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.video.RealTimeStreamingAlgorithm;
 import com.koniosoftworks.kvstreaming.domain.video.StaticStreamingAlgorithm;
+import com.koniosoftworks.kvstreaming.utils.ScreenShotMaker;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.logging.log4j.Logger;
 
@@ -15,31 +17,22 @@ import java.io.IOException;
  * Created by Maxian Nicu on 5/21/2017.
  */
 public class ScreenRecordAlgorithm implements RealTimeStreamingAlgorithm {
-    private final Robot screenShotMaker;
     private final Logger logger;
 
     @Inject
     public ScreenRecordAlgorithm(Logger logger) {
         this.logger = logger;
-        try {
-            screenShotMaker = new Robot();
-        } catch (AWTException e) {
-            logger.error(e);
-            throw new RuntimeException("Could not start screen streaming",e);
-        }
     }
 
     @Override
-    public byte[] getCurrentImage() {
-        BufferedImage screenCapture = screenShotMaker.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-        ByteOutputStream byteOutputStream = new ByteOutputStream();
+    public byte[] getCurrentImage() throws IOException {
+        BufferedImage bufferedImage = ScreenShotMaker.getINSTANCE()
+                .makeScreenshot()
+                .resize(ServerProperties.BROADCAST_IMAGE_WIDTH, ServerProperties.BROADCAST_IMAGE_HEIGHT)
+                .getBufferedImage();
+        ByteOutputStream output = new ByteOutputStream();
+        ImageIO.write(bufferedImage,"jpg", output);
 
-        try {
-            ImageIO.write(screenCapture,"jpg",byteOutputStream);
-            return byteOutputStream.getBytes();
-        } catch (IOException e) {
-            logger.error(e);
-            throw new RuntimeException(e);
-        }
+        return output.getBytes();
     }
 }

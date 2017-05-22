@@ -29,7 +29,6 @@ public class ClientsPool {
     private final Logger logger;
     private final TaskScheduler taskScheduler;
     private final Set<Runnable> runningRunnables = new HashSet<>();
-    private ServerContext serverContext;
 
     @Inject
     public ClientsPool(
@@ -42,10 +41,6 @@ public class ClientsPool {
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
 
-    }
-
-    public void setServerContext(ServerContext serverContext) {
-        this.serverContext = serverContext;
     }
 
     @Nullable
@@ -62,7 +57,7 @@ public class ClientsPool {
     }
 
     private void setupAndOpenConnection(ClientConnection clientConnection) {
-        clientConnection.open(NameGenerator.generateName(),serverContext.getUdpPort());
+        clientConnection.open(NameGenerator.generateName());
         chatMessages.forEach(clientConnection::sendMessage);
 
         Runnable runnable = () -> checkForMessageRequest(clientConnection);

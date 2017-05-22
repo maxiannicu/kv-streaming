@@ -10,10 +10,8 @@ import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +22,6 @@ public class ServerImpl implements Server {
     private final ClientsPool clientsPool;
     private final TaskScheduler taskScheduler;
     private final Logger logger;
-    private ServerContext serverContext;
     private DatagramSocket datagramSocket;
     private Runnable videoStreamingRunnable;
 
@@ -40,7 +37,7 @@ public class ServerImpl implements Server {
         try {
             serverSocket = new ServerSocket(tcpPort);
             datagramSocket = new DatagramSocket();
-            serverContext = new ServerContext(serverSocket.getInetAddress(),tcpPort,datagramSocket.getPort());
+            datagramSocket.setBroadcast(true);
             logger.info("TCP Server started at " + Formatting.getConnectionInfo(serverSocket));
             logger.info("UDP Server started at " + Formatting.getConnectionInfo(datagramSocket));
             taskScheduler.run(this::waitForConnections);
@@ -69,13 +66,17 @@ public class ServerImpl implements Server {
     @Override
     public void startStreaming(RealTimeStreamingAlgorithm algorithm) {
         videoStreamingRunnable = () -> {
-            byte[] currentImage = algorithm.getCurrentImage();
-
-            DatagramPacket datagramPacket = new DatagramPacket(currentImage, currentImage.length);
+            byte[] currentImage;
             try {
+                currentImage = algorithm.getCurrentImage();
+
+                logger.debug("Sending image with size of "+currentImage.length+" bytes");
+
+                DatagramPacket datagramPacket = null;
+                datagramPacket = new DatagramPacket(currentImage, currentImage.length, InetAddress.getByName(ServerProperties.BROADCAST_SENDING), 23456);
                 datagramSocket.send(datagramPacket);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         };
 

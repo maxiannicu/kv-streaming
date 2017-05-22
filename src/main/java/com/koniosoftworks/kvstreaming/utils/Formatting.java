@@ -1,5 +1,6 @@
 package com.koniosoftworks.kvstreaming.utils;
 
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -12,6 +13,10 @@ public class Formatting {
     }
 
     public static String getConnectionInfo(ServerSocket socket){
+        return String.format("%s:%s",socket.getInetAddress(),socket.getLocalPort());
+    }
+
+    public static String getConnectionInfo(DatagramSocket socket){
         return String.format("%s:%s",socket.getInetAddress(),socket.getLocalPort());
     }
 }

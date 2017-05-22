@@ -4,12 +4,17 @@ import com.google.inject.Inject;
 import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
+import com.koniosoftworks.kvstreaming.domain.video.RealTimeStreamingAlgorithm;
+import com.koniosoftworks.kvstreaming.domain.video.StaticStreamingAlgorithm;
 import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by nicu on 5/15/17.
@@ -19,6 +24,9 @@ public class ServerImpl implements Server {
     private final ClientsPool clientsPool;
     private final TaskScheduler taskScheduler;
     private final Logger logger;
+    private ServerContext serverContext;
+    private DatagramSocket datagramSocket;
+    private Runnable videoStreamingRunnable;
 
     @Inject
     public ServerImpl(TaskScheduler taskScheduler, ClientsPool clientsPool, Logger logger) {
@@ -28,11 +36,13 @@ public class ServerImpl implements Server {
     }
 
     @Override
-    public void start(int port) {
+    public void start(int tcpPort) {
         try {
-            serverSocket = new ServerSocket(port);
-            logger.info("Server started at " + Formatting.getConnectionInfo(serverSocket));
-            serverSocket.setSoTimeout(180000);
+            serverSocket = new ServerSocket(tcpPort);
+            datagramSocket = new DatagramSocket();
+            serverContext = new ServerContext(serverSocket.getInetAddress(),tcpPort,datagramSocket.getPort());
+            logger.info("TCP Server started at " + Formatting.getConnectionInfo(serverSocket));
+            logger.info("UDP Server started at " + Formatting.getConnectionInfo(datagramSocket));
             taskScheduler.run(this::waitForConnections);
         } catch (IOException e) {
             logger.error(e);
@@ -45,8 +55,38 @@ public class ServerImpl implements Server {
             taskScheduler.stopAll();
             clientsPool.dropConnections();
             serverSocket.close();
+            stopStreaming();
         } catch (IOException e) {
             logger.error(e);
+        }
+    }
+
+    @Override
+    public void startStreaming(StaticStreamingAlgorithm algorithm) {
+        //todo
+    }
+
+    @Override
+    public void startStreaming(RealTimeStreamingAlgorithm algorithm) {
+        videoStreamingRunnable = () -> {
+            byte[] currentImage = algorithm.getCurrentImage();
+
+            DatagramPacket datagramPacket = new DatagramPacket(currentImage, currentImage.length);
+            try {
+                datagramSocket.send(datagramPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+
+        taskScheduler.schedule(videoStreamingRunnable,ServerProperties.VIDEO_STREAMING_INTERVAL_SENDING, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void stopStreaming() {
+        if(videoStreamingRunnable != null){
+            taskScheduler.unschedule(videoStreamingRunnable);
+            videoStreamingRunnable = null;
         }
     }
 
@@ -63,4 +103,5 @@ public class ServerImpl implements Server {
             }
         }
     }
+
 }

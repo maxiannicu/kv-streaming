@@ -5,4 +5,5 @@ package com.koniosoftworks.kvstreaming.domain.props;
  */
 public class ServerProperties {
     public static final int MAX_CONNECTIONS_ALLOWED = 10;
+    public static final int VIDEO_STREAMING_INTERVAL_SENDING = 80; //ms
 }

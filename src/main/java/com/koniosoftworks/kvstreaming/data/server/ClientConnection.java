@@ -20,37 +20,32 @@ import java.net.Socket;
 class ClientConnection extends Connection {
     private String username;
 
-    ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
+    public ClientConnection(Socket socket, PacketSerialization packetSerialization, EncodingAlgorithm encodingAlgorithm, Logger logger) throws IOException {
         super(socket, packetSerialization, encodingAlgorithm, logger);
-    }
-
-    void setUsername(String username) {
-        this.username = username;
     }
 
     public String getUsername() {
         return username;
     }
 
-    void sendMessage(ChatMessage chatMessage) {
+    public void sendMessage(ChatMessage chatMessage) {
         Packet<ChatMessage> packet = new Packet<>(PacketType.CHAT_MESSAGE, chatMessage);
         try {
             send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO handle here exception.
+            logger.error(e);
         }
     }
 
-    void open() {
+    public void open(String username, int udpPort) {
+        this.username = username;
         Packet<InitializationMessage> packet = new Packet<>(PacketType.INITIALIZATION,
-                new InitializationMessage(username));
+                new InitializationMessage(username, udpPort));
 
         try {
             send(packet);
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO handle here exception.
+            logger.error(e);
         }
     }
 
@@ -60,8 +55,7 @@ class ClientConnection extends Connection {
         try {
             send(message);
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO handle here exception.
+            logger.error(e);
         }
     }
 

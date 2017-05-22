@@ -37,7 +37,7 @@ public class TaskSchedulerImpl implements TaskScheduler {
         }
         if(threads.containsKey(runnable)){
             Thread thread = threads.get(runnable);
-            thread.interrupt();
+            thread.stop();
             threads.remove(runnable);
         }
     }

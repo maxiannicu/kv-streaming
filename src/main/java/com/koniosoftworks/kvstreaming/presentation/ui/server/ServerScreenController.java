@@ -32,6 +32,10 @@ public class ServerScreenController extends BaseController {
         this.logger = logger;
     }
 
+    public void initialize(){
+        refreshButtonState();
+    }
+
     public void handleStartButton(ActionEvent actionEvent) {
         this.server.start(Integer.valueOf(tcpPortTextField.getText()));
         connected = true;
@@ -50,6 +54,7 @@ public class ServerScreenController extends BaseController {
             server.startStreaming(new ScreenRecordAlgorithm(logger));
             screnRecording = true;
         } else {
+            server.stopStreaming();
             screnRecording = false;
         }
         refreshButtonState();

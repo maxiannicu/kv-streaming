@@ -86,8 +86,11 @@ public class ClientScreenController extends BaseController implements ClientList
     }
 
     public void handleSendButton(ActionEvent actionEvent) {
-        client.sendMessage(messageTextField.getText());
-        messageTextField.setText("");
+        String text = messageTextField.getText();
+        if(text.trim().length() > 0) {
+            client.sendMessage(text);
+            messageTextField.setText("");
+        }
     }
 
     public void handleTextMessageKeyEvent(KeyEvent keyEvent) {
@@ -200,6 +203,8 @@ public class ClientScreenController extends BaseController implements ClientList
         this.messageTextField.setDisable(!connected);
         this.sendButton.setDisable(!connected);
         this.listView.setDisable(!connected);
+        if(!connected)
+            this.imageView.setImage(null);
     }
 
 }

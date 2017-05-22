@@ -5,14 +5,11 @@ import com.koniosoftworks.kvstreaming.domain.concurrency.TaskScheduler;
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.server.Server;
 import com.koniosoftworks.kvstreaming.domain.video.RealTimeStreamingAlgorithm;
-import com.koniosoftworks.kvstreaming.domain.video.StaticStreamingAlgorithm;
 import com.koniosoftworks.kvstreaming.utils.Formatting;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by nicu on 5/15/17.
@@ -56,11 +53,6 @@ public class ServerImpl implements Server {
         } catch (IOException e) {
             logger.error(e);
         }
-    }
-
-    @Override
-    public void startStreaming(StaticStreamingAlgorithm algorithm) {
-        //todo
     }
 
     @Override

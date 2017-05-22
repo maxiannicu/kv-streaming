@@ -39,6 +39,15 @@ public class ScreenShotMaker {
         return this;
     }
 
+    public ScreenShotMaker resizeToMax(int width,int height) {
+        int imageWidth = bufferedImage.getWidth();
+        int imageHeight = bufferedImage.getHeight();
+
+        double ratio = Math.min(width*1.0/imageWidth,height*1.0/imageHeight);
+        doResize((int)(imageWidth*ratio),(int)(imageHeight*ratio));
+        return this;
+    }
+
     public ScreenShotMaker resize(float scale) {
         doResize((int)(bufferedImage.getWidth() * scale), (int)(bufferedImage.getHeight() * scale));
         return this;

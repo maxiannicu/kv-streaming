@@ -2,14 +2,12 @@ package com.koniosoftworks.kvstreaming.data.video;
 
 import com.koniosoftworks.kvstreaming.domain.props.ServerProperties;
 import com.koniosoftworks.kvstreaming.domain.video.RealTimeStreamingAlgorithm;
-import com.koniosoftworks.kvstreaming.domain.video.StaticStreamingAlgorithm;
 import com.koniosoftworks.kvstreaming.utils.ScreenShotMaker;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -28,7 +26,7 @@ public class ScreenRecordAlgorithm implements RealTimeStreamingAlgorithm {
     public byte[] getCurrentImage() throws IOException {
         BufferedImage bufferedImage = ScreenShotMaker.getINSTANCE()
                 .makeScreenshot()
-                .resize(ServerProperties.BROADCAST_IMAGE_WIDTH, ServerProperties.BROADCAST_IMAGE_HEIGHT)
+                .resizeToMax(ServerProperties.BROADCAST_IMAGE_WIDTH, ServerProperties.BROADCAST_IMAGE_HEIGHT)
                 .getBufferedImage();
         ByteOutputStream output = new ByteOutputStream();
         ImageIO.write(bufferedImage,"jpg", output);

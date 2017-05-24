@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by max on 5/20/17.
@@ -28,7 +29,7 @@ public class ClientsPool {
     private final List<ChatMessage> chatMessages;
     private final Logger logger;
     private final TaskScheduler taskScheduler;
-    private final Set<Runnable> runningRunnables = new HashSet<>();
+    private final Set<Runnable> runningRunnables;
 
     @Inject
     public ClientsPool(
@@ -36,8 +37,9 @@ public class ClientsPool {
             EncodingAlgorithm encodingAlgorithm, Logger logger, TaskScheduler taskScheduler) {
         this.logger = logger;
         this.taskScheduler = taskScheduler;
-        this.connections = new HashSet<>();
-        this.chatMessages = new ArrayList<>();
+        this.connections = Collections.newSetFromMap(new ConcurrentHashMap<ClientConnection, Boolean>());;
+        this.runningRunnables = Collections.newSetFromMap(new ConcurrentHashMap<Runnable, Boolean>());;
+        this.chatMessages = Collections.synchronizedList(new ArrayList<>());
         this.packetSerialization = packetSerialization;
         this.encodingAlgorithm = encodingAlgorithm;
 
